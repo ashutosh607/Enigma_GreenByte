@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { setUser } from '../store/slices/authSlice';
 import { authApi } from '../services/api';
+import { motion } from 'framer-motion';
 
 export default function RegisterPage() {
   const navigate = useNavigate();
@@ -127,7 +128,12 @@ export default function RegisterPage() {
     <div className="min-h-screen bg-[#FDFCF8] text-[#101010] py-12 px-4 sm:px-6 lg:px-8 flex flex-col justify-center">
       <div className="max-w-2xl mx-auto w-full">
         {/* Header Breadcrumb / Logo */}
-        <div className="text-center mb-8">
+        <motion.div
+          initial={{ opacity: 0, y: -16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="text-center mb-8"
+        >
           <Link to="/" className="inline-flex items-center gap-2 group mb-4">
             <div className="w-9 h-9 rounded-xl bg-[#101010] text-[#FDFCF8] flex items-center justify-center font-black text-sm shadow-sm group-hover:scale-105 transition-transform">
               RE
@@ -148,10 +154,15 @@ export default function RegisterPage() {
           <p className="mt-2 text-sm text-[#101010]/70 max-w-md mx-auto">
             Join verified industrial facilities trading secondary by-products and circular raw materials.
           </p>
-        </div>
+        </motion.div>
 
         {/* Main Registration Card */}
-        <div className="bg-white rounded-3xl p-8 sm:p-10 border border-[#E3DBCC] shadow-xl">
+        <motion.div
+          initial={{ opacity: 0, y: 24, scale: 0.99 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 0.45, delay: 0.08 }}
+          className="bg-white rounded-3xl p-8 sm:p-10 border border-[#E3DBCC] shadow-xl"
+        >
           {error && (
             <div className="mb-6 p-4 rounded-xl bg-red-50 border border-red-200 text-xs text-red-700 flex items-center gap-2">
               <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
@@ -404,7 +415,7 @@ export default function RegisterPage() {
               </Link>
             </p>
           </div>
-        </div>
+        </motion.div>
       </div>
     </div>
   );

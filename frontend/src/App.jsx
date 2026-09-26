@@ -5,6 +5,7 @@ import { store } from './store/store';
 import { fetchCurrentUser } from './store/slices/authSlice';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import PageTransitionCurtain from './components/PageTransitionCurtain';
 
 // Pages
 import LandingPage from './pages/LandingPage';
@@ -35,6 +36,9 @@ function AppContent() {
     <div className="min-h-screen flex flex-col bg-[#FDFCF8] text-[#101010] selection:bg-[#E3DBCC] selection:text-[#101010]">
       {/* Editorial Minimal Navbar */}
       <Navbar />
+
+      {/* Cinematic Full-Page Transition Curtain */}
+      <PageTransitionCurtain />
 
       {/* Main Content Area - padded on non-home routes so floating glassmorphic navbar doesn't obscure content */}
       <main className={`flex-1 w-full ${isHome ? '' : 'pt-20 sm:pt-24'}`}>
