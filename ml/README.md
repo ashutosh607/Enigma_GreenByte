@@ -80,7 +80,7 @@ curl http://127.0.0.1:8000/v1/matches \
   -d '{"requirement_id":"demo-aggregate"}'
 ```
 
-For a complete local demo, run `python scripts/demo_flow.py` in another terminal while the explicitly enabled demo server is running. It discovers slag → aggregate, supplies an illustrative 80% yield and cost scenario, obtains ₹150,000 estimated savings for 100 tonnes, confirms that identities are blocked before consent, records both consents, then logs a sample request. The opportunity still requires technical validation.
+For a complete local demo, run `python scripts/demo_flow.py` in another terminal while the explicitly enabled demo server is running. If your server uses another port, use `python scripts/demo_flow.py --base-url http://127.0.0.1:8002`. See [the local testing guide](docs/LOCAL_TESTING.md) for the steps and expected results. It discovers slag → aggregate, supplies an illustrative 80% yield and cost scenario, obtains ₹150,000 estimated savings for 100 tonnes, confirms that identities are blocked before consent, records both consents, then logs a sample request. The opportunity still requires technical validation.
 
 ## Tests
 
