@@ -2,6 +2,9 @@ const mongoose = require("mongoose");
 
 const resourceSchema = new mongoose.Schema(
   {
+    materialName: { type: String },
+    availableFrom: { type: Date },
+    availableUntil: { type: Date },
     title: { type: String, required: true, trim: true },
     category: {
       type: String,
@@ -28,6 +31,7 @@ const resourceSchema = new mongoose.Schema(
       state: { type: String, required: true },
       country: { type: String, default: "India" },
       approxDistanceKm: { type: Number, default: 85 },
+      coordinatesConfirmed: { type: Boolean, default: false },
       coordinates: {
         lat: { type: Number, default: 19.076 },
         lng: { type: Number, default: 72.8777 },
@@ -52,6 +56,8 @@ const resourceSchema = new mongoose.Schema(
     },
     properties: [
       {
+        basis: { type: String, enum: ["input", "output"], default: "input" },
+        measuredOn: { type: Date },
         name: { type: String, required: true },
         value: { type: String, required: true },
         unit: { type: String, default: "" },

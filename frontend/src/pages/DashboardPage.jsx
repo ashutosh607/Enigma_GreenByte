@@ -1,3 +1,4 @@
+import MlListingFields from '../components/MlListingFields';
 import React, { useState, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
@@ -77,12 +78,13 @@ export default function DashboardPage() {
     city: user?.company?.location?.city || 'Nagpur',
     state: user?.company?.location?.state || 'Maharashtra',
     region: 'Western India',
-    purityPercent: '95',
-    moisturePercent: '2.5',
+    purityPercent: '',
+    moisturePercent: '',
     processingRequired: false,
-    identityVisibility: 'Public',
+    identityVisibility: 'Open',
     handlingNotes: '',
   });
+  const [mlListing, setMlListing] = useState({});
   const [submittingProduct, setSubmittingProduct] = useState(false);
   const [productSuccessMsg, setProductSuccessMsg] = useState('');
   const [createdProductId, setCreatedProductId] = useState(null);
@@ -177,6 +179,10 @@ export default function DashboardPage() {
 
     try {
       const payload = {
+        materialName: mlListing.materialName || undefined,
+        availableFrom: mlListing.availableFrom || undefined,
+        availableUntil: mlListing.availableUntil || undefined,
+        availability: productForm.unit.includes('/month') ? 'Recurring' : 'One-time Batch',
         title: productForm.title,
         category: productForm.category,
         stateOfMatter: productForm.stateOfMatter,
@@ -189,10 +195,12 @@ export default function DashboardPage() {
           city: productForm.city,
           state: productForm.state,
           region: productForm.region,
+          coordinates: mlListing.latitude !== '' && mlListing.longitude !== '' && mlListing.latitude != null && mlListing.longitude != null ? { lat: Number(mlListing.latitude), lng: Number(mlListing.longitude) } : undefined,
+          coordinatesConfirmed: mlListing.latitude != null && mlListing.latitude !== '' && mlListing.longitude != null && mlListing.longitude !== '',
         },
         properties: [
-          { name: 'Purity', value: `${productForm.purityPercent}%` },
-          { name: 'Moisture Content', value: `${productForm.moisturePercent}%` },
+          ...(productForm.purityPercent === '' ? [] : [{ name: 'Purity', value: `${productForm.purityPercent}%`, basis: mlListing.measurementBasis || 'input' }]),
+          ...(productForm.moisturePercent === '' ? [] : [{ name: 'Moisture', value: `${productForm.moisturePercent}%`, basis: mlListing.measurementBasis || 'input' }]),
         ],
         processingRequired: productForm.processingRequired,
         identityVisibility: productForm.identityVisibility,
@@ -202,6 +210,7 @@ export default function DashboardPage() {
       const res = await resourceApi.createResource(payload);
       if (res.data?.resource) {
         const newResource = res.data.resource;
+        setMlListing({});
         setCreatedProductId(newResource._id);
         setResources((prev) => [newResource, ...prev]);
         setProductSuccessMsg(
@@ -755,6 +764,8 @@ export default function DashboardPage() {
                       </select>
                     </div>
                   </div>
+
+                  <MlListingFields value={mlListing} onChange={setMlListing} />
 
                   {/* Row 2: Quantity, Unit, Price */}
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">

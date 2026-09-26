@@ -1,153 +1,68 @@
 const Requirement = require("../models/Requirement");
 const Opportunity = require("../models/Opportunity");
-const Company = require("../models/Company");
 const { discoverAlternatives } = require("../services/aiDiscoveryService");
 const { sanitizeResourceForViewer } = require("../middleware/auth");
+const { MlIntegrationError } = require("../services/mlMarketplaceAdapter");
 
-// @desc    Submit buyer requirement and run AI discovery
-// @route   POST /api/discovery/match
+function safeOpportunity(opportunity, viewer) {
+  const obj = opportunity.toObject ? opportunity.toObject() : { ...opportunity };
+  obj.resource = sanitizeResourceForViewer(obj.resource, viewer);
+  if (obj.resource?.identityVisibility === 'Confidential' && String(obj.seller?._id ?? obj.seller) !== String(viewer)) {
+    obj.seller = { name: 'Confidential supplier', isConfidential: true };
+    if (obj.resource.seller) obj.resource.seller = { name: 'Confidential supplier', isConfidential: true };
+    if (obj.resource.location) obj.resource.location = { region: obj.resource.location.region, state: obj.resource.location.state };
+    if (obj.resource.materialPassport) {
+      obj.resource.materialPassport = { evidenceStatus: obj.resource.materialPassport.evidenceStatus };
+    }
+    delete obj.resource.sellerUser;
+  }
+  return obj;
+}
 const submitAndMatch = async (req, res) => {
   try {
-    const {
-      currentMaterial,
-      intendedUse,
-      requiredQuantity,
-      unit,
-      requiredProperties,
-      currentCostPerUnit,
-      deliveryLocation,
-      timing,
-    } = req.body;
-
-    let buyerId = req.user?.company?._id;
-    if (!buyerId) {
-      const defaultBuyer = await Company.findOne({ roleType: { $in: ["Consumer", "Both"] } });
-      buyerId = defaultBuyer?._id;
+    const buyerId = req.user?.company?._id;
+    if (!buyerId) return res.status(401).json({ success: false, message: 'Sign in with a company account to run discovery.' });
+    const body = req.body;
+    for (const field of ['currentMaterial', 'targetResource', 'intendedUse']) {
+      if (typeof body[field] !== 'string' || !body[field].trim()) throw new MlIntegrationError(`Enter ${field}.`);
     }
-
-    // Save Requirement
-    const requirement = await Requirement.create({
-      currentMaterial: currentMaterial || "Virgin Calcium Carbonate",
-      intendedUse: intendedUse || "Construction Aggregate & Sub-base",
-      requiredQuantity: Number(requiredQuantity) || 300,
-      unit: unit || "tons/month",
-      requiredProperties: requiredProperties || [
-        { name: "Purity", targetValue: "> 88%", tolerance: "±3%" },
-        { name: "Moisture", targetValue: "< 3.5%", tolerance: "±0.5%" },
-        { name: "Bulk Density", targetValue: "1,450 kg/m³", tolerance: "±50 kg/m³" },
-      ],
-      currentCostPerUnit: Number(currentCostPerUnit) || 100,
-      deliveryLocation: deliveryLocation || {
-        city: "Pune",
-        state: "Maharashtra",
-        region: "Western India",
-      },
-      timing: timing || "Recurring",
-      buyer: buyerId,
-      buyerUser: req.user?._id,
-    });
-
-    // Run AI discovery match engine
-    const matchResults = await discoverAlternatives(requirement, buyerId);
-
-    // Save generated opportunities in database
-    const createdOpportunities = [];
-    for (const match of matchResults) {
-      const opp = await Opportunity.create({
-        title: match.title,
-        intendedUse: match.intendedUse,
-        requirement: requirement._id,
-        resource: match.resource._id,
-        buyer: buyerId,
-        seller: match.resource.seller._id || match.resource.seller,
-        compatibility: match.compatibility,
-        whyMatch: match.whyMatch,
-        opportunityAssessment: match.opportunityAssessment,
-        costComparison: match.costComparison,
-        environmentalScenario: match.environmentalScenario,
-        status: "Identified",
-      });
-
-      const populatedOpp = await Opportunity.findById(opp._id)
-        .populate("resource")
-        .populate("seller", "name industry location verificationStatus");
-
-      createdOpportunities.push({
-        ...populatedOpp.toObject(),
-        resource: sanitizeResourceForViewer(populatedOpp.resource, buyerId),
-      });
+    if (!(Number(body.requiredQuantity) > 0)) throw new MlIntegrationError('Enter a positive required quantity.');
+    if (body.currentCostPerUnit === '' || body.currentCostPerUnit == null || !Number.isFinite(Number(body.currentCostPerUnit)) || Number(body.currentCostPerUnit) < 0) throw new MlIntegrationError('Enter a non-negative current delivered price.');
+    const fields = ['currentMaterial', 'targetResource', 'intendedUse', 'requiredQuantity', 'minimumQuantity', 'unit', 'requiredProperties', 'currentCostPerUnit', 'deliveryLocation', 'timing', 'neededFrom', 'neededUntil', 'processingAllowed'];
+    const input = Object.fromEntries(fields.filter(k => body[k] != null).map(k => [k, body[k]]));
+    // Allocate an ID before assessment, but only save after the ML request succeeds.
+    const requirement = new Requirement({ ...input, buyer: buyerId, buyerUser: req.user._id });
+    await requirement.validate();
+    const { matches, metadata } = await discoverAlternatives(requirement, buyerId, { scenario: body.scenario });
+    await requirement.save();
+    const opportunities = [];
+    for (const match of matches) {
+      const opp = await Opportunity.create({ ...match, requirement: requirement._id, resource: match.resource._id,
+        buyer: buyerId, seller: match.resource.seller._id || match.resource.seller, status: 'Identified' });
+      const populated = await Opportunity.findById(opp._id).populate('resource').populate('seller', 'name industry location verificationStatus');
+      opportunities.push(safeOpportunity(populated, buyerId));
     }
-
-    res.status(200).json({
-      success: true,
-      requirement,
-      totalAnalyzed: 248,
-      requirementsAnalyzed: 173,
-      matchesFound: createdOpportunities.length,
-      opportunities: createdOpportunities,
-    });
+    res.json({ success: true, requirement, ...metadata, matchesFound: opportunities.length, opportunities });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    res.status(error.statusCode || (error.name === 'ValidationError' ? 422 : 500)).json({ success: false, message: error.message });
   }
 };
-
-// @desc    Get all opportunities for company
-// @route   GET /api/discovery/opportunities
 const getOpportunities = async (req, res) => {
   try {
-    const viewerCompanyId = req.user?.company?._id;
-    const query = {};
-
-    if (viewerCompanyId) {
-      query.$or = [{ buyer: viewerCompanyId }, { seller: viewerCompanyId }];
-    }
-
-    const opportunities = await Opportunity.find(query)
-      .populate("resource")
-      .populate("buyer", "name industry location")
-      .populate("seller", "name industry location verificationStatus")
-      .sort({ createdAt: -1 });
-
-    const sanitized = opportunities.map((opp) => {
-      const oppObj = opp.toObject();
-      if (oppObj.resource) {
-        oppObj.resource = sanitizeResourceForViewer(oppObj.resource, viewerCompanyId);
-      }
-      return oppObj;
-    });
-
-    res.json({ success: true, count: sanitized.length, opportunities: sanitized });
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
-  }
+    const viewer = req.user?.company?._id;
+    if (!viewer) return res.status(401).json({ success: false, message: 'Company sign-in required.' });
+    // Discovery includes private buyer requirements/costs. Sellers use the deal workspace.
+    const opportunities = await Opportunity.find({ buyer: viewer }).populate('resource').populate('seller', 'name industry location verificationStatus').sort({ createdAt: -1 });
+    res.json({ success: true, count: opportunities.length, opportunities: opportunities.map(o => safeOpportunity(o, viewer)) });
+  } catch (error) { res.status(500).json({ success: false, message: error.message }); }
 };
-
-// @desc    Get single opportunity by ID
-// @route   GET /api/discovery/opportunities/:id
 const getOpportunityById = async (req, res) => {
   try {
-    const opportunity = await Opportunity.findById(req.params.id)
-      .populate("resource")
-      .populate("requirement")
-      .populate("buyer", "name industry location")
-      .populate("seller", "name industry location verificationStatus");
-
-    if (!opportunity) {
-      return res.status(404).json({ success: false, message: "Opportunity not found" });
-    }
-
-    const viewerCompanyId = req.user?.company?._id;
-    const oppObj = opportunity.toObject();
-    oppObj.resource = sanitizeResourceForViewer(oppObj.resource, viewerCompanyId);
-
-    res.json({ success: true, opportunity: oppObj });
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
-  }
+    const viewer = req.user?.company?._id;
+    if (!viewer) return res.status(401).json({ success: false, message: 'Company sign-in required.' });
+    const opportunity = await Opportunity.findOne({ _id: req.params.id, buyer: viewer }).populate('resource').populate('requirement').populate('seller', 'name industry location verificationStatus');
+    if (!opportunity) return res.status(404).json({ success: false, message: 'Opportunity not found' });
+    res.json({ success: true, opportunity: safeOpportunity(opportunity, viewer) });
+  } catch (error) { res.status(error.name === 'CastError' ? 404 : 500).json({ success: false, message: error.message }); }
 };
-
-module.exports = {
-  submitAndMatch,
-  getOpportunities,
-  getOpportunityById,
-};
+module.exports = { submitAndMatch, getOpportunities, getOpportunityById, safeOpportunity };

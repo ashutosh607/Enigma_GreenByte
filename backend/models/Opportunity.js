@@ -2,6 +2,8 @@ const mongoose = require("mongoose");
 
 const opportunitySchema = new mongoose.Schema(
   {
+    mlAssessment: { type: mongoose.Schema.Types.Mixed },
+    engine: { type: String },
     title: { type: String, required: true }, // e.g. "Steel Slag → Aggregate"
     intendedUse: { type: String, required: true },
     requirement: {

@@ -31,3 +31,12 @@ pnpm-debug.log*
 .DS_Store
 .idea
 .vscode/
+
+# Python and local ML runtime
+.venv/
+__pycache__/
+*.pyc
+*.egg-info/
+.pytest_cache/
+ml/var/
+ml/.cache/

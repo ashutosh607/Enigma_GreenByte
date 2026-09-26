@@ -1,0 +1,58 @@
+{
+  "automated_tests": {
+    "passed": 20,
+    "failed": 0,
+    "command": "python -m pytest -q",
+    "scope": "business-rule and API regression tests; synthetic company data, real author graph"
+  },
+  "graph": {
+    "status": "ok",
+    "demo": true,
+    "retrieval_backend": "lexical",
+    "source_relationships": 33679,
+    "loaded_routes": 32889,
+    "quarantined": 790,
+    "extraction_configured": false
+  },
+  "lexical_demo_latency_ms": {
+    "minimum": 0.4,
+    "maximum": 1.11,
+    "median": 0.5,
+    "requests": 10,
+    "scope": "in-process two-listing demonstration; not a production load test"
+  },
+  "semantic_smoke_test": {
+    "startup_seconds": 6.36,
+    "health": {
+      "status": "ok",
+      "demo": true,
+      "retrieval_backend": "sentence_transformers",
+      "source_relationships": 33679,
+      "loaded_routes": 32889,
+      "quarantined": 790,
+      "extraction_configured": false
+    },
+    "match_elapsed_ms": 516.76,
+    "candidate_count": 4,
+    "results": 2
+  },
+  "live_http_demo": {
+    "passed": true,
+    "host": "127.0.0.1:8000",
+    "verified": [
+      "discovery",
+      "125 tonnes input for 100 tonnes output at 80% yield",
+      "INR 150000 estimated savings",
+      "HTTP 403 before mutual consent",
+      "identity reveal after both consents",
+      "sample-request feedback"
+    ]
+  },
+  "not_verified": [
+    "paper GTE checkpoint inference",
+    "live commercial LLM provider (mocked extraction tested)",
+    "Docker build/run",
+    "industrial trial outcomes",
+    "large concurrent load"
+  ]
+}

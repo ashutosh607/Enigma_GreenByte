@@ -56,6 +56,8 @@ const discoverySlice = createSlice({
     builder
       .addCase(runAiDiscovery.pending, (state) => {
         state.analyzing = true;
+        state.opportunities = [];
+        state.latestResult = null;
         state.error = null;
       })
       .addCase(runAiDiscovery.fulfilled, (state, action) => {

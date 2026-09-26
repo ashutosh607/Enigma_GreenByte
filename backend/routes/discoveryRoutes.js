@@ -5,10 +5,10 @@ const {
   getOpportunities,
   getOpportunityById,
 } = require("../controllers/discoveryController");
-const { protect } = require("../middleware/auth");
+const { protect, requireAuth } = require("../middleware/auth");
 
-router.post("/match", protect, submitAndMatch);
-router.get("/opportunities", protect, getOpportunities);
-router.get("/opportunities/:id", protect, getOpportunityById);
+router.post("/match", protect, requireAuth, submitAndMatch);
+router.get("/opportunities", protect, requireAuth, getOpportunities);
+router.get("/opportunities/:id", protect, requireAuth, getOpportunityById);
 
 module.exports = router;

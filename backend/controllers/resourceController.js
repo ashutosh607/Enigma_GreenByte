@@ -124,6 +124,7 @@ const getResourceById = async (req, res) => {
 const createResource = async (req, res) => {
   try {
     const {
+      materialName, availableFrom, availableUntil,
       title,
       category,
       stateOfMatter,
@@ -152,8 +153,9 @@ const createResource = async (req, res) => {
     }
 
     const resource = await Resource.create({
+      materialName, availableFrom, availableUntil,
       title,
-      category: category || "By-product",
+      category: ["By-product", "Residual", "Waste", "Secondary Material"].includes(category) ? category : "By-product",
       stateOfMatter: stateOfMatter || "Solid",
       description,
       quantity: Number(quantity),
@@ -176,13 +178,14 @@ const createResource = async (req, res) => {
       processingDetails: processingDetails || "Crushing and mechanical screening required",
       properties: properties || [],
       materialPassport: materialPassport || {
-        sourceStatus: "Verified Continuous Blast Stream",
-        preparation: "Water-quenched & milled",
-        testDate: new Date(),
-        evidenceStatus: "Verified Lab Report",
-        summary: "Trace elemental assay confirmed compliant with environmental guidelines.",
+        sourceStatus: "Self-reported material",
+        preparation: "Not recorded",
+        testDate: null,
+        labReportUrl: "",
+        evidenceStatus: "Pending",
+        summary: "No independent material verification supplied.",
       },
-      identityVisibility: identityVisibility || "Confidential",
+      identityVisibility: identityVisibility === "Public" ? "Open" : (identityVisibility || "Confidential"),
       images: images || [],
       tags: tags || [],
       seller: sellerId,

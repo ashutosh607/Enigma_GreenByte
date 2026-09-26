@@ -12,6 +12,7 @@ import {
   ShieldCheck,
   Building,
 } from 'lucide-react';
+import MlOpportunityAssessment from '../components/MlOpportunityAssessment';
 import { discoveryApi, dealApi } from '../services/api';
 
 export default function OpportunityDetailPage() {
@@ -21,6 +22,7 @@ export default function OpportunityDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [initiating, setInitiating] = useState(false);
+  const [dealQuantity, setDealQuantity] = useState('');
 
   useEffect(() => {
     discoveryApi
@@ -37,13 +39,17 @@ export default function OpportunityDetailPage() {
 
   const handleDoDeal = async () => {
     if (!opportunity) return;
+    if (opportunity.mlAssessment && !(Number(dealQuantity) > 0)) {
+      alert('Enter the input-material quantity to negotiate. Usable output can differ from purchased input.');
+      return;
+    }
     setInitiating(true);
     try {
       const res = await dealApi.initiateDeal({
         resourceId: opportunity.resource?._id || opportunity.resource,
         opportunityId: opportunity._id,
-        quantity: opportunity.environmentalScenario?.materialExchangedPerMonth || 300,
-        proposedPrice: opportunity.costComparison?.alternativeMaterialCost || 50,
+        quantity: opportunity.mlAssessment ? Number(dealQuantity) : opportunity.environmentalScenario?.materialExchangedPerMonth || 300,
+        proposedPrice: opportunity.resource?.basePrice ?? opportunity.costComparison?.alternativeMaterialCost ?? 0,
       });
       navigate(`/deals/${res.data.dealId}`);
     } catch (err) {
@@ -80,6 +86,19 @@ export default function OpportunityDetailPage() {
       </div>
     );
   }
+
+  if (opportunity.mlAssessment) return (
+    <main className="min-h-screen bg-[#FDFCF8] text-[#101010] py-10"><div className="max-w-6xl mx-auto px-4 space-y-6">
+      <Link to="/ai-discovery" className="text-sm underline">← Back to discovery</Link>
+      <MlOpportunityAssessment opportunity={opportunity} detailed />
+      <section className="rounded-xl border border-[#E3DBCC] bg-white p-6 space-y-3">
+        <h2 className="font-semibold">Discuss a trial or commercial terms</h2>
+        <p className="text-sm text-black/60">Opening negotiation does not resolve the outstanding feasibility checks. Input-material quantity may differ from usable output.</p>
+        <label className="block text-sm">Quantity to purchase ({opportunity.resource?.unit || 'listing units'})<input className="block rounded-lg border border-[#E3DBCC] p-3 mt-1" type="number" min="0.001" step="any" value={dealQuantity} onChange={e => setDealQuantity(e.target.value)} /></label>
+        <button className="rounded-lg bg-black text-white px-5 py-3 disabled:opacity-50" disabled={initiating || !dealQuantity || opportunity.mlAssessment.status === 'rejected'} onClick={handleDoDeal}>{initiating ? 'Opening negotiation…' : 'Start negotiation'}</button>
+      </section>
+    </div></main>
+  );
 
   const isConfidential = opportunity.resource?.identityVisibility === 'Confidential';
   const supplierName =
