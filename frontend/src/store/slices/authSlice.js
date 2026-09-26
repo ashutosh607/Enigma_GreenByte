@@ -31,6 +31,18 @@ export const switchUserPersona = createAsyncThunk(
   }
 );
 
+export const updateUserProfile = createAsyncThunk(
+  'auth/updateUserProfile',
+  async (formData, { rejectWithValue }) => {
+    try {
+      const res = await authApi.updateProfile(formData);
+      return res.data.user;
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || 'Failed to update profile');
+    }
+  }
+);
+
 const authSlice = createSlice({
   name: 'auth',
   initialState: {
@@ -67,6 +79,9 @@ const authSlice = createSlice({
       .addCase(switchUserPersona.fulfilled, (state, action) => {
         state.user = action.payload;
         state.activeRole = action.payload?.role || 'buyer';
+      })
+      .addCase(updateUserProfile.fulfilled, (state, action) => {
+        state.user = action.payload;
       });
   },
 });

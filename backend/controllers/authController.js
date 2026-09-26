@@ -141,10 +141,64 @@ const getPersonas = async (req, res) => {
   }
 };
 
+// @desc    Update current user profile & company details
+// @route   PUT /api/auth/profile
+const updateProfile = async (req, res) => {
+  try {
+    let user = req.user;
+    if (!user) {
+      user = await User.findOne().populate("company");
+    }
+    if (!user) {
+      return res.status(401).json({ success: false, message: "Not authenticated" });
+    }
+
+    const { name, phone, jobTitle, companyName, industry, city, state, bio, description } = req.body;
+
+    if (name) user.name = name;
+    if (phone !== undefined) user.phone = phone;
+    if (jobTitle !== undefined) user.jobTitle = jobTitle;
+    await user.save();
+
+    if (user.company) {
+      const company = await Company.findById(user.company._id || user.company);
+      if (company) {
+        if (companyName) company.name = companyName;
+        if (industry) company.industry = industry;
+        if (description || bio) company.description = description || bio;
+        if (city) company.location.city = city;
+        if (state) company.location.state = state;
+        await company.save();
+      }
+    } else if (companyName) {
+      const newCompany = await Company.create({
+        name: companyName,
+        industry: industry || "Steel & Metallurgy",
+        location: { city: city || "Mumbai", state: state || "Maharashtra" },
+        description: description || bio || "",
+      });
+      user.company = newCompany._id;
+      await user.save();
+    }
+
+    const populatedUser = await User.findById(user._id).populate("company");
+
+    res.json({
+      success: true,
+      user: populatedUser,
+      message: "Profile updated successfully",
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 module.exports = {
   register,
   login,
   getMe,
   switchPersona,
   getPersonas,
+  updateProfile,
 };
+

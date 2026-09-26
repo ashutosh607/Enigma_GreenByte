@@ -1,10 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { LayoutDashboard, Shield, Menu, X, LogIn, UserPlus, LogOut, Sparkles } from 'lucide-react';
+import {
+  LayoutDashboard,
+  Menu,
+  X,
+  LogIn,
+  UserPlus,
+  LogOut,
+  Sparkles,
+  ChevronDown,
+  User,
+  Package,
+  PlusCircle,
+  Settings,
+  Building2,
+} from 'lucide-react';
 import { logout } from '../store/slices/authSlice';
 import NotificationDropdown from './NotificationDropdown';
-import RoleSwitcher from './RoleSwitcher';
 import LoginModal from './LoginModal';
 
 export default function Navbar() {
@@ -16,36 +29,64 @@ export default function Navbar() {
 
   const [loginModalOpen, setLoginModalOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+  const profileDropdownRef = useRef(null);
 
   const isHome = location.pathname === '/';
   const isActive = (path) => location.pathname === path;
 
+  // Close dropdown on click outside
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (
+        profileDropdownRef.current &&
+        !profileDropdownRef.current.contains(event.target)
+      ) {
+        setProfileDropdownOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   const handleLogout = () => {
+    setProfileDropdownOpen(false);
     dispatch(logout());
     navigate('/');
   };
 
+  // Initials for avatar
+  const getInitials = (name) => {
+    if (!name) return 'U';
+    const parts = name.trim().split(' ');
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[1][0]).toUpperCase();
+    }
+    return parts[0].slice(0, 2).toUpperCase();
+  };
+
+  const displayName = user?.name || user?.email?.split('@')[0] || 'User';
+  const companyName = user?.company?.name || 'Verified Member';
+
   return (
     <>
-      {/* 
-        On Home/Landing page, the navbar floats seamlessly over the background video
-        with the logo on the far left, links in the center, and login/sign-up on the far right.
-      */}
-      <header 
+      <header
         className={`${
           isHome
             ? 'absolute top-4 sm:top-6 left-0 right-0 z-40 flex justify-center px-4 sm:px-6 pointer-events-none'
             : 'sticky top-0 z-40 w-full bg-[#FDFCF8]/95 backdrop-blur-md border-b border-[#E3DBCC]'
         } select-none`}
       >
-        <div 
+        <div
           className={`${
             isHome
               ? 'pointer-events-auto w-full max-w-7xl h-14 sm:h-16 px-5 sm:px-8 rounded-2xl sm:rounded-full bg-white/80 hover:bg-white/95 backdrop-blur-xl border border-white/60 shadow-[0_8px_32px_rgba(0,0,0,0.08)] flex items-center justify-between gap-4 transition-all duration-300'
               : 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between gap-4'
           }`}
         >
-          {/* 1. LEFT SIDE: Logo separated to the far left */}
+          {/* 1. LEFT SIDE: Logo */}
           <div className="flex items-center">
             <Link to="/" className="flex items-center gap-2.5 group text-decoration-none focus:outline-none">
               <div className="w-8 h-8 rounded-xl bg-[#101010] text-[#FDFCF8] flex items-center justify-center font-black text-sm tracking-tighter shadow-sm group-hover:scale-105 transition-transform">
@@ -62,9 +103,8 @@ export default function Navbar() {
             </Link>
           </div>
 
-          {/* 2. MIDDLE: Navigation Links (Home, Marketplace, AI Discovery, and My Activity ONLY when logged in) */}
+          {/* 2. MIDDLE: Clean Navigation Links */}
           <nav className="hidden md:flex items-center gap-1.5 lg:gap-3">
-            {/* Home link */}
             <Link
               to="/"
               className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold uppercase tracking-wider transition-colors ${
@@ -76,7 +116,6 @@ export default function Navbar() {
               Home
             </Link>
 
-            {/* Marketplace link */}
             <Link
               to="/marketplace"
               className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold uppercase tracking-wider transition-colors ${
@@ -88,7 +127,6 @@ export default function Navbar() {
               Marketplace
             </Link>
 
-            {/* AI Discovery link */}
             <Link
               to="/ai-discovery"
               className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold uppercase tracking-wider transition-colors flex items-center gap-1.5 ${
@@ -100,31 +138,12 @@ export default function Navbar() {
               <Sparkles className="w-3.5 h-3.5 text-[#286B4A]" />
               AI Discovery
             </Link>
-
-
-            {/* 
-              My Activity: ONLY available and visible when the person has ALREADY LOGGED IN
-            */}
-            {user && (
-              <Link
-                to="/dashboard"
-                className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold uppercase tracking-wider transition-colors animate-in fade-in duration-200 ${
-                  isActive('/dashboard')
-                    ? 'bg-[#101010] text-[#FDFCF8]'
-                    : 'text-[#101010]/75 hover:text-[#101010] hover:bg-black/5'
-                }`}
-              >
-                My Activity
-              </Link>
-            )}
           </nav>
 
-          {/* 3. RIGHT SIDE: Separated Login & Sign Up (or Dashboard when logged in) */}
+          {/* 3. RIGHT SIDE: Login / Sign Up OR Profile Dropdown */}
           <div className="flex items-center gap-2 sm:gap-3">
             {!user ? (
-              /* When NOT logged in: Separate Login (popup) and Sign Up (new page) */
               <div className="flex items-center gap-2">
-                {/* Login Button (Opens Modal Popup) */}
                 <button
                   type="button"
                   onClick={() => setLoginModalOpen(true)}
@@ -134,7 +153,6 @@ export default function Navbar() {
                   <span>Log In</span>
                 </button>
 
-                {/* Sign Up Button (Navigates to dedicated /register page) */}
                 <Link
                   to="/register"
                   className="flex items-center gap-1.5 px-4 sm:px-5 py-2 rounded-xl sm:rounded-full bg-[#101010] hover:bg-black text-[#FDFCF8] text-xs font-bold uppercase tracking-wider transition-all shadow-md active:scale-95 cursor-pointer"
@@ -144,28 +162,110 @@ export default function Navbar() {
                 </Link>
               </div>
             ) : (
-              /* When LOGGED IN: Reveal Dashboard Button & Persona Controls */
-              <div className="flex items-center gap-2">
-                <RoleSwitcher />
+              <div className="flex items-center gap-2 sm:gap-3">
                 <NotificationDropdown />
 
-                <Link
-                  to="/dashboard"
-                  className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl sm:rounded-full bg-[#101010] hover:bg-black text-[#FDFCF8] text-xs font-semibold transition-all shadow-sm"
-                  title="Open Dashboard"
-                >
-                  <LayoutDashboard className="w-3.5 h-3.5 text-[#B8D957]" />
-                  <span>Dashboard</span>
-                </Link>
+                {/* Profile Button with Dropdown Below It */}
+                <div className="relative" ref={profileDropdownRef}>
+                  <button
+                    type="button"
+                    onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
+                    className="flex items-center gap-2 px-2.5 sm:px-3 py-1.5 rounded-full bg-white hover:bg-[#F3F0E9] border border-[#E3DBCC] text-[#101010] transition-all shadow-xs cursor-pointer focus:outline-none"
+                    aria-label="User Profile Dropdown"
+                    aria-expanded={profileDropdownOpen}
+                  >
+                    {/* Avatar Initials Badge */}
+                    <div className="w-7 h-7 rounded-full bg-[#101010] text-[#FDFCF8] flex items-center justify-center text-xs font-bold font-mono shadow-inner">
+                      {getInitials(displayName)}
+                    </div>
+                    <div className="hidden sm:flex flex-col text-left leading-tight">
+                      <span className="text-xs font-bold text-[#101010] truncate max-w-[120px]">
+                        {displayName}
+                      </span>
+                      <span className="text-[10px] text-[#101010]/60 font-mono truncate max-w-[120px]">
+                        {companyName}
+                      </span>
+                    </div>
+                    <ChevronDown
+                      className={`w-3.5 h-3.5 text-[#101010]/60 transition-transform duration-200 ${
+                        profileDropdownOpen ? 'rotate-180' : ''
+                      }`}
+                    />
+                  </button>
 
-                <button
-                  type="button"
-                  onClick={handleLogout}
-                  className="p-1.5 rounded-lg hover:bg-black/5 text-[#101010]/60 hover:text-red-600 transition-colors cursor-pointer"
-                  title="Logout"
-                >
-                  <LogOut className="w-4 h-4" />
-                </button>
+                  {/* Profile Dropdown Menu */}
+                  {profileDropdownOpen && (
+                    <div className="absolute right-0 mt-2 w-64 rounded-2xl bg-white border border-[#E3DBCC] shadow-2xl py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+                      {/* User Header Details */}
+                      <div className="px-4 py-3 border-b border-[#E3DBCC]/60 bg-[#FDFCF8] rounded-t-2xl">
+                        <div className="text-xs font-mono font-bold text-[#286B4A] uppercase tracking-wider mb-0.5">
+                          Active Account
+                        </div>
+                        <div className="text-sm font-bold text-[#101010] truncate">
+                          {displayName}
+                        </div>
+                        <div className="text-xs text-[#101010]/65 truncate">
+                          {user.email}
+                        </div>
+                        <div className="mt-2 flex items-center gap-1.5 text-[11px] font-mono text-[#101010]/80 bg-[#E3DBCC]/50 px-2 py-0.5 rounded-md">
+                          <Building2 className="w-3 h-3 text-[#101010]/60 shrink-0" />
+                          <span className="truncate">{companyName}</span>
+                        </div>
+                      </div>
+
+                      {/* Dropdown Navigation Actions */}
+                      <div className="py-1.5">
+                        <Link
+                          to="/dashboard"
+                          onClick={() => setProfileDropdownOpen(false)}
+                          className="flex items-center gap-2.5 px-4 py-2.5 text-xs font-bold text-[#101010] hover:bg-[#F3F0E9] transition-colors"
+                        >
+                          <LayoutDashboard className="w-4 h-4 text-[#286B4A]" />
+                          <span>Dashboard</span>
+                        </Link>
+
+                        <Link
+                          to="/dashboard?tab=orders"
+                          onClick={() => setProfileDropdownOpen(false)}
+                          className="flex items-center gap-2.5 px-4 py-2.5 text-xs font-semibold text-[#101010]/85 hover:bg-[#F3F0E9] hover:text-[#101010] transition-colors"
+                        >
+                          <Package className="w-4 h-4 text-[#101010]/60" />
+                          <span>Purchases & Orders</span>
+                        </Link>
+
+                        <Link
+                          to="/dashboard?tab=add-product"
+                          onClick={() => setProfileDropdownOpen(false)}
+                          className="flex items-center gap-2.5 px-4 py-2.5 text-xs font-semibold text-[#101010]/85 hover:bg-[#F3F0E9] hover:text-[#101010] transition-colors"
+                        >
+                          <PlusCircle className="w-4 h-4 text-[#101010]/60" />
+                          <span>Add Live Product</span>
+                        </Link>
+
+                        <Link
+                          to="/dashboard?tab=settings"
+                          onClick={() => setProfileDropdownOpen(false)}
+                          className="flex items-center gap-2.5 px-4 py-2.5 text-xs font-semibold text-[#101010]/85 hover:bg-[#F3F0E9] hover:text-[#101010] transition-colors"
+                        >
+                          <Settings className="w-4 h-4 text-[#101010]/60" />
+                          <span>Profile Settings</span>
+                        </Link>
+                      </div>
+
+                      {/* Sign Out Action */}
+                      <div className="pt-1.5 border-t border-[#E3DBCC]/60">
+                        <button
+                          type="button"
+                          onClick={handleLogout}
+                          className="w-full flex items-center gap-2.5 px-4 py-2.5 text-xs font-bold text-red-600 hover:bg-red-50 transition-colors text-left cursor-pointer"
+                        >
+                          <LogOut className="w-4 h-4" />
+                          <span>Log Out</span>
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             )}
 
@@ -206,17 +306,6 @@ export default function Navbar() {
               AI Discovery
             </Link>
 
-            {/* My Activity in Mobile Menu ONLY when logged in */}
-            {user && (
-              <Link
-                to="/dashboard"
-                onClick={() => setMobileMenuOpen(false)}
-                className="block px-3 py-2 rounded-lg text-sm font-semibold text-[#101010] hover:bg-black/5"
-              >
-                My Activity
-              </Link>
-            )}
-
             <div className="pt-2 border-t border-[#E3DBCC]">
               {!user ? (
                 <div className="flex flex-col gap-2">
@@ -239,24 +328,58 @@ export default function Navbar() {
                   </Link>
                 </div>
               ) : (
-                <div className="flex items-center justify-between pt-1">
+                <div className="space-y-1 pt-1">
+                  <div className="px-3 py-2 bg-[#F3F0E9] rounded-xl mb-2">
+                    <div className="text-xs font-bold text-[#101010]">{displayName}</div>
+                    <div className="text-[11px] text-[#101010]/60 font-mono">{companyName}</div>
+                  </div>
+
                   <Link
                     to="/dashboard"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center gap-1.5 text-sm font-bold text-[#101010]"
+                    className="flex items-center gap-2 px-3 py-2 text-sm font-bold text-[#101010] rounded-lg hover:bg-black/5"
                   >
                     <LayoutDashboard className="w-4 h-4 text-[#286B4A]" />
                     Dashboard
                   </Link>
+
+                  <Link
+                    to="/dashboard?tab=orders"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center gap-2 px-3 py-2 text-sm font-semibold text-[#101010]/80 rounded-lg hover:bg-black/5"
+                  >
+                    <Package className="w-4 h-4 text-[#101010]/60" />
+                    Purchases & Orders
+                  </Link>
+
+                  <Link
+                    to="/dashboard?tab=add-product"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center gap-2 px-3 py-2 text-sm font-semibold text-[#101010]/80 rounded-lg hover:bg-black/5"
+                  >
+                    <PlusCircle className="w-4 h-4 text-[#101010]/60" />
+                    Add Live Product
+                  </Link>
+
+                  <Link
+                    to="/dashboard?tab=settings"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center gap-2 px-3 py-2 text-sm font-semibold text-[#101010]/80 rounded-lg hover:bg-black/5"
+                  >
+                    <Settings className="w-4 h-4 text-[#101010]/60" />
+                    Profile Settings
+                  </Link>
+
                   <button
                     type="button"
                     onClick={() => {
                       setMobileMenuOpen(false);
                       handleLogout();
                     }}
-                    className="text-xs font-semibold text-red-600"
+                    className="w-full flex items-center gap-2 px-3 py-2 text-sm font-bold text-red-600 rounded-lg hover:bg-red-50 text-left mt-2"
                   >
-                    Logout
+                    <LogOut className="w-4 h-4" />
+                    Log Out
                   </button>
                 </div>
               )}

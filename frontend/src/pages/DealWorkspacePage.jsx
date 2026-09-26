@@ -286,7 +286,7 @@ export default function DealWorkspacePage() {
                     Buyer
                   </span>
                   <span className="font-semibold text-[#101010]">
-                    {deal.buyer?.name || 'UltraTech Infrastructure & Aggregates'}
+                    {deal.buyer?.name || user?.company?.name || 'Industrial Buyer'}
                   </span>
                 </div>
 

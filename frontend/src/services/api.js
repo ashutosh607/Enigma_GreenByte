@@ -30,6 +30,7 @@ export const authApi = {
   getMe: () => api.get('/auth/me'),
   switchPersona: (role) => api.get(`/auth/switch-persona/${role}`),
   getPersonas: () => api.get('/auth/personas'),
+  updateProfile: (data) => api.put('/auth/profile', data),
 };
 
 // Resources API
