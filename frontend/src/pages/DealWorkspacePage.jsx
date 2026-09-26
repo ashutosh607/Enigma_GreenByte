@@ -1061,10 +1061,10 @@ export default function DealWorkspacePage() {
                       </div>
                     </div>
                     <Link
-                      to="/impact"
+                      to="/dashboard"
                       className="px-4 py-2 rounded-lg bg-[#101010] text-[#FDFCF8] text-xs font-bold hover:bg-black"
                     >
-                      View Environmental Credit →
+                      View Exchange Ledger →
                     </Link>
                   </div>
                 </div>

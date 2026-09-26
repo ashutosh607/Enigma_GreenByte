@@ -392,10 +392,10 @@ export default function LandingPage() {
                 </p>
               </div>
               <Link
-                to="/impact"
+                to="/dashboard"
                 className="px-5 py-2.5 rounded-lg bg-[#101010] text-[#FDFCF8] text-xs font-semibold self-start md:self-center shrink-0 cursor-pointer"
               >
-                View Impact Dashboard →
+                View Activity Dashboard →
               </Link>
             </div>
           </div>

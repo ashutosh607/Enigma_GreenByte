@@ -62,7 +62,7 @@ export default function Navbar() {
             </Link>
           </div>
 
-          {/* 2. MIDDLE: Navigation Links (Home, Marketplace, AI Discovery, Impact, and My Activity ONLY when logged in) */}
+          {/* 2. MIDDLE: Navigation Links (Home, Marketplace, AI Discovery, and My Activity ONLY when logged in) */}
           <nav className="hidden md:flex items-center gap-1.5 lg:gap-3">
             {/* Home link */}
             <Link
@@ -101,17 +101,6 @@ export default function Navbar() {
               AI Discovery
             </Link>
 
-            {/* Impact link */}
-            <Link
-              to="/impact"
-              className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold uppercase tracking-wider transition-colors ${
-                isActive('/impact')
-                  ? 'bg-[#101010] text-[#FDFCF8]'
-                  : 'text-[#101010]/75 hover:text-[#101010] hover:bg-black/5'
-              }`}
-            >
-              Impact
-            </Link>
 
             {/* 
               My Activity: ONLY available and visible when the person has ALREADY LOGGED IN
@@ -215,13 +204,6 @@ export default function Navbar() {
               className="block px-3 py-2 rounded-lg text-sm font-semibold text-[#101010] hover:bg-black/5"
             >
               AI Discovery
-            </Link>
-            <Link
-              to="/impact"
-              onClick={() => setMobileMenuOpen(false)}
-              className="block px-3 py-2 rounded-lg text-sm font-semibold text-[#101010] hover:bg-black/5"
-            >
-              Impact
             </Link>
 
             {/* My Activity in Mobile Menu ONLY when logged in */}

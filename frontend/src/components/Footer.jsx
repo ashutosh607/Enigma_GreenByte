@@ -47,12 +47,8 @@ export default function Footer() {
                   Price Request Ledger
                 </Link>
               </li>
-              <li>
-                <Link to="/impact" className="text-[#101010]/80 hover:text-[#101010] transition-colors">
-                  Environmental Impact
-                </Link>
-              </li>
             </ul>
+
           </div>
 
           {/* Column 2: Material Sectors */}
