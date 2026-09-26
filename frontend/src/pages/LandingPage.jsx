@@ -1,24 +1,19 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import {
   ArrowRight,
   Sparkles,
-  ShieldCheck,
-  Cpu,
   Layers,
-  FileCheck,
-  TrendingDown,
-  Sliders,
-  DollarSign,
+  ShieldCheck,
+  CheckCircle2,
+  ArrowRightLeft,
   Truck,
-  Leaf,
-  Lock,
+  FileCheck,
 } from 'lucide-react';
 import { resourceApi, impactApi } from '../services/api';
 import ResourceCard from '../components/ResourceCard';
 import ListResourceModal from '../components/ListResourceModal';
-import LiveDemoCard from '../components/sections/LiveDemoCard';
-import CrossIndustryProof from '../components/sections/CrossIndustryProof';
 import DemoModal from '../components/hero/DemoModal';
 import factoryVideo from '../assets/landingpagevd.mp4';
 
@@ -51,11 +46,34 @@ export default function LandingPage() {
       .catch(() => {});
   }, []);
 
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.15,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 24 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.6,
+        ease: [0.22, 1, 0.36, 1],
+      },
+    },
+  };
+
   return (
     <div className="w-full bg-[#FDFCF8] text-[#101010]">
-      {/* 1. CINEMATIC HERO SECTION WITH HIGH-GRADE INDUSTRIAL VIDEO (100dvh - NO SCROLL NEEDED) */}
+      {/* 1. CINEMATIC HERO SECTION WITH HIGH-GRADE INDUSTRIAL VIDEO */}
       <section className="relative w-full h-[100dvh] min-h-[580px] max-h-[100dvh] flex flex-col items-center justify-center overflow-hidden border-b border-[#E3DBCC]">
-        {/* Full-screen Background Video / Atmospheric Poster */}
+        {/* Full-screen Background Video */}
         <div className="absolute inset-0 w-full h-full overflow-hidden z-0 bg-black">
           <video
             ref={videoRef}
@@ -72,7 +90,7 @@ export default function LandingPage() {
             <source src={factoryVideo} type="video/mp4" />
           </video>
 
-          {/* Elegant Scrim Overlay: Soft neutral radial and vertical vignette allowing factory & smoke to remain clearly visible */}
+          {/* Elegant Scrim Overlay */}
           <div
             className="absolute inset-0 pointer-events-none"
             style={{
@@ -84,12 +102,10 @@ export default function LandingPage() {
 
         {/* Hero Content - Focused Headline and Direct CTAs */}
         <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 text-center pt-16 sm:pt-20">
-          {/* Headline */}
           <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-[#101010] uppercase max-w-3xl mx-auto leading-[1.06]">
             Turn Industrial Residuals Into Resources.
           </h1>
 
-          {/* Primary Action Buttons */}
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3.5">
             <Link
               to="/marketplace"
@@ -122,301 +138,242 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* 2. LIVE METRICS RIBBON */}
-      <section className="w-full bg-[#F3F0E9] border-b border-[#E3DBCC] py-6">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+      {/* 2. MINIMAL METRICS STRIP (Clean & Subtle) */}
+      <section className="w-full bg-[#F3F0E9]/70 border-b border-[#E3DBCC] py-7">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="grid grid-cols-2 md:grid-cols-3 gap-6 text-center"
+          >
             <div>
-              <div className="text-2xl sm:text-3xl font-extrabold text-[#101010] font-mono">
-                {impactMetrics ? impactMetrics.totalWasteDivertedTons?.toLocaleString() : '14,550'}{' '}
-                <span className="text-xs font-normal text-[#101010]/60">tons</span>
+              <div className="text-2xl sm:text-3xl font-black text-[#101010] font-mono">
+                {impactMetrics ? impactMetrics.totalWasteDivertedTons?.toLocaleString() : '14,550'}
+                <span className="text-xs font-normal text-[#101010]/60 ml-1">tons</span>
               </div>
-              <div className="text-xs uppercase font-mono text-[#101010]/55 mt-1 font-medium">
-                Industrial Waste Diverted
+              <div className="text-xs uppercase font-mono text-[#101010]/60 mt-1 font-semibold">
+                Industrial Residuals Diverted
               </div>
             </div>
 
             <div>
-              <div className="text-2xl sm:text-3xl font-extrabold text-[#101010] font-mono">
-                {impactMetrics ? impactMetrics.totalVirginDisplacedTons?.toLocaleString() : '13,200'}{' '}
-                <span className="text-xs font-normal text-[#101010]/60">tons</span>
+              <div className="text-2xl sm:text-3xl font-black text-[#101010] font-mono">
+                {impactMetrics ? impactMetrics.totalVirginDisplacedTons?.toLocaleString() : '13,200'}
+                <span className="text-xs font-normal text-[#101010]/60 ml-1">tons</span>
               </div>
-              <div className="text-xs uppercase font-mono text-[#101010]/55 mt-1 font-medium">
-                Virgin Raw Materials Displaced
+              <div className="text-xs uppercase font-mono text-[#101010]/60 mt-1 font-semibold">
+                Virgin Raw Materials Saved
               </div>
             </div>
 
-            <div>
-              <div className="text-2xl sm:text-3xl font-extrabold text-[#101010] font-mono">
-                {impactMetrics ? impactMetrics.totalCo2eAbatedMT?.toLocaleString() : '9,140'}{' '}
-                <span className="text-xs font-normal text-[#101010]/60">MT</span>
+            <div className="col-span-2 md:col-span-1">
+              <div className="text-2xl sm:text-3xl font-black text-[#286B4A] font-mono">
+                {impactMetrics ? impactMetrics.totalCo2eAbatedMT?.toLocaleString() : '9,140'}
+                <span className="text-xs font-normal text-[#101010]/60 ml-1">MT</span>
               </div>
-              <div className="text-xs uppercase font-mono text-[#101010]/55 mt-1 font-medium">
+              <div className="text-xs uppercase font-mono text-[#101010]/60 mt-1 font-semibold">
                 Net CO2e Abated
               </div>
             </div>
-
-            <div>
-              <div className="text-2xl sm:text-3xl font-extrabold text-[#101010] font-mono">
-                0%
-              </div>
-              <div className="text-xs uppercase font-mono text-[#101010]/55 mt-1 font-medium">
-                Chat Friction (Slider Commerce)
-              </div>
-            </div>
-          </div>
+          </motion.div>
         </div>
       </section>
 
-      {/* 3. VISUAL STORY: HOW RE:SOURCE WORKS */}
-      <section className="w-full py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="max-w-2xl mb-16">
-          <div className="text-xs font-mono uppercase tracking-widest text-[#101010]/55 font-bold mb-2">
-            System Architecture
+      {/* 3. "WHAT WE PROVIDE" — SIMPLE, MINIMAL WORD BOX WITH FRAMER MOTION */}
+      <section className="w-full py-20 sm:py-28 max-w-6xl mx-auto px-4 sm:px-6">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="text-center max-w-2xl mx-auto mb-14 sm:mb-18"
+        >
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#E3DBCC]/60 text-[11px] font-mono font-bold uppercase tracking-wider text-[#286B4A] mb-3">
+            Core Platform
           </div>
           <h2 className="text-3xl sm:text-4xl font-black uppercase text-[#101010] tracking-tight">
-            How RE:SOURCE Works
+            What We Provide
           </h2>
-          <p className="mt-3 text-sm sm:text-base text-[#101010]/70 leading-relaxed">
-            Marketplace and AI Discovery both feed into the same auditable exchange pipeline.
-            Every step is structured, certified, and completed without unstructured chat.
+          <p className="mt-3 text-sm sm:text-base text-[#101010]/70 leading-relaxed font-normal">
+            A verified industrial exchange connecting waste-producing plants with manufacturing facilities that can reuse them.
           </p>
-        </div>
+        </motion.div>
 
-        {/* 7-Step Journey Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* 01 — List */}
-          <div className="card-ivory p-6 border border-[#E3DBCC] rounded-xl flex flex-col justify-between">
+        {/* 3 Simple, Clean Pillar Cards */}
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-50px' }}
+          className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8"
+        >
+          {/* Box 1: Material Marketplace */}
+          <motion.div
+            variants={itemVariants}
+            whileHover={{ y: -5, transition: { duration: 0.2 } }}
+            className="p-8 rounded-2xl bg-white border border-[#E3DBCC] shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between"
+          >
             <div>
-              <span className="text-xs font-mono font-bold px-2 py-1 rounded bg-[#E3DBCC] text-[#101010]">
-                01 — List
-              </span>
-              <h3 className="text-xl font-bold uppercase text-[#101010] mt-4 mb-2">
-                List Industrial Residuals
-              </h3>
-              <p className="text-xs text-[#101010]/70 leading-relaxed">
-                Companies list industrial residuals, by-products, and secondary streams with verified
-                assays, quantity schedules, and confidentiality controls.
-              </p>
-            </div>
-            <div className="mt-6 pt-4 border-t border-[#E3DBCC]/70 flex items-center justify-between text-[11px] font-mono text-[#101010]/60">
-              <span>Open / Confidential</span>
-              <Lock className="w-3.5 h-3.5 text-[#101010]" />
-            </div>
-          </div>
-
-          {/* 02 — Discover */}
-          <div className="card-ivory p-6 border border-[#E3DBCC] rounded-xl flex flex-col justify-between">
-            <div>
-              <span className="text-xs font-mono font-bold px-2 py-1 rounded bg-[#E3DBCC] text-[#101010]">
-                02 — Discover
-              </span>
-              <h3 className="text-xl font-bold uppercase text-[#101010] mt-4 mb-2">
-                Material Marketplace
-              </h3>
-              <p className="text-xs text-[#101010]/70 leading-relaxed">
-                Procurement teams search and filter verified physical materials by region, sieve size,
-                moisture tolerance, and certified evidence status.
-              </p>
-            </div>
-            <div className="mt-6 pt-4 border-t border-[#E3DBCC]/70 flex items-center justify-between text-[11px] font-mono text-[#101010]/60">
-              <span>Material Passports</span>
-              <FileCheck className="w-3.5 h-3.5 text-[#101010]" />
-            </div>
-          </div>
-
-          {/* 03 — AI Match */}
-          <div className="card-ivory p-6 border border-[#E3DBCC] rounded-xl flex flex-col justify-between bg-[#F3F0E9] ring-1 ring-[#101010]/20">
-            <div>
-              <span className="text-xs font-mono font-bold px-2 py-1 rounded bg-[#101010] text-[#FDFCF8]">
-                03 — AI Match
-              </span>
-              <h3 className="text-xl font-bold uppercase text-[#101010] mt-4 mb-2">
-                AI Discovery Engine
-              </h3>
-              <p className="text-xs text-[#101010]/70 leading-relaxed">
-                Input the virgin material you currently buy. AI identifies secondary symbiosis matches
-                with compatibility scores across technical, economic, and timing factors.
-              </p>
-            </div>
-            <div className="mt-6 pt-4 border-t border-[#E3DBCC]/70 flex items-center justify-between text-[11px] font-mono text-[#101010]/60">
-              <span>FastAPI/ML Powered</span>
-              <Cpu className="w-3.5 h-3.5 text-[#101010]" />
-            </div>
-          </div>
-
-          {/* 04 — Assess */}
-          <div className="card-ivory p-6 border border-[#E3DBCC] rounded-xl flex flex-col justify-between">
-            <div>
-              <span className="text-xs font-mono font-bold px-2 py-1 rounded bg-[#E3DBCC] text-[#101010]">
-                04 — Assess
-              </span>
-              <h3 className="text-xl font-bold uppercase text-[#101010] mt-4 mb-2">
-                Engineering Assessment
-              </h3>
-              <p className="text-xs text-[#101010]/70 leading-relaxed">
-                Technical, chemical, quantity, logistics, and lab evidence are evaluated with clear
-                blocker owners and completion milestones.
-              </p>
-            </div>
-            <div className="mt-6 pt-4 border-t border-[#E3DBCC]/70 flex items-center justify-between text-[11px] font-mono text-[#101010]/60">
-              <span>Lab Verification</span>
-              <ShieldCheck className="w-3.5 h-3.5 text-[#101010]" />
-            </div>
-          </div>
-
-          {/* 05 — Deal (Slider Negotiation) */}
-          <div className="card-ivory p-6 border border-[#101010] rounded-xl flex flex-col justify-between bg-[#FDFCF8] shadow-sm">
-            <div>
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-mono font-bold px-2 py-1 rounded bg-[#101010] text-[#FDFCF8]">
-                  05 — Deal
-                </span>
-                <span className="text-[10px] font-mono uppercase bg-[#E3DBCC] px-2 py-0.5 rounded font-bold text-[#101010]">
-                  NO CHAT
-                </span>
+              <div className="w-12 h-12 rounded-xl bg-[#F3F0E9] flex items-center justify-center text-[#101010] mb-6">
+                <Layers className="w-6 h-6 text-[#286B4A]" />
               </div>
-              <h3 className="text-xl font-bold uppercase text-[#101010] mt-4 mb-2">
-                Price Negotiation Slider
+              <h3 className="text-lg font-bold uppercase tracking-tight text-[#101010] mb-2">
+                Secondary Marketplace
               </h3>
-              <p className="text-xs text-[#101010]/70 leading-relaxed">
-                Buyer selects target price or price band using interactive sliders. Seller reviews on
-                dashboard: Accept, Counter, or Reject.
+              <p className="text-xs sm:text-sm text-[#101010]/70 leading-relaxed">
+                Buy and sell verified industrial by-products, fly ash, mineral slag, and chemical residuals directly with industrial producers.
               </p>
             </div>
-            <div className="mt-6 pt-4 border-t border-[#E3DBCC]/70 flex items-center justify-between text-[11px] font-mono text-[#101010]/60">
-              <span>Structured Ledger</span>
-              <Sliders className="w-3.5 h-3.5 text-[#101010]" />
-            </div>
-          </div>
+            <Link
+              to="/marketplace"
+              className="mt-6 pt-4 border-t border-[#E3DBCC]/70 flex items-center gap-1.5 text-xs font-bold text-[#101010] hover:text-[#286B4A] transition-colors"
+            >
+              <span>Explore Marketplace</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </motion.div>
 
-          {/* 06 — Exchange */}
-          <div className="card-ivory p-6 border border-[#E3DBCC] rounded-xl flex flex-col justify-between">
+          {/* Box 2: AI Alternative Discovery */}
+          <motion.div
+            variants={itemVariants}
+            whileHover={{ y: -5, transition: { duration: 0.2 } }}
+            className="p-8 rounded-2xl bg-white border border-[#E3DBCC] shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between"
+          >
             <div>
-              <span className="text-xs font-mono font-bold px-2 py-1 rounded bg-[#E3DBCC] text-[#101010]">
-                06 — Exchange
-              </span>
-              <h3 className="text-xl font-bold uppercase text-[#101010] mt-4 mb-2">
-                Escrow → Delivery
+              <div className="w-12 h-12 rounded-xl bg-[#F3F0E9] flex items-center justify-center text-[#101010] mb-6">
+                <Sparkles className="w-6 h-6 text-[#286B4A]" />
+              </div>
+              <h3 className="text-lg font-bold uppercase tracking-tight text-[#101010] mb-2">
+                AI Material Discovery
               </h3>
-              <p className="text-xs text-[#101010]/70 leading-relaxed">
-                Escrow deposit → dispatch tracking → receiving inspection → laboratory quality
-                confirmation before fund release.
+              <p className="text-xs sm:text-sm text-[#101010]/70 leading-relaxed">
+                Enter the virgin raw materials your factory purchases. Our AI matches certified secondary substitutes that lower costs.
               </p>
             </div>
-            <div className="mt-6 pt-4 border-t border-[#E3DBCC]/70 flex items-center justify-between text-[11px] font-mono text-[#101010]/60">
-              <span>Quality Sign-off</span>
-              <Truck className="w-3.5 h-3.5 text-[#101010]" />
-            </div>
-          </div>
+            <Link
+              to="/ai-discovery"
+              className="mt-6 pt-4 border-t border-[#E3DBCC]/70 flex items-center gap-1.5 text-xs font-bold text-[#101010] hover:text-[#286B4A] transition-colors"
+            >
+              <span>Discover Alternatives</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </motion.div>
 
-          {/* 07 — Impact */}
-          <div className="card-ivory p-6 border border-[#E3DBCC] rounded-xl flex flex-col justify-between md:col-span-2 lg:col-span-3 bg-[#F3F0E9]">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-              <div>
-                <span className="text-xs font-mono font-bold px-2 py-1 rounded bg-[#E3DBCC] text-[#101010]">
-                  07 — Impact & History
-                </span>
-                <h3 className="text-2xl font-bold uppercase text-[#101010] mt-3 mb-1">
-                  Track Circularity & Environmental Credits
-                </h3>
-                <p className="text-xs text-[#101010]/70 leading-relaxed max-w-2xl">
-                  Each completed exchange generates verified displacement certificates: cubic meters of
-                  landfill diverted, virgin quarrying avoided, and scope 3 emissions eliminated.
-                </p>
+          {/* Box 3: Certified Escrow & Logistics */}
+          <motion.div
+            variants={itemVariants}
+            whileHover={{ y: -5, transition: { duration: 0.2 } }}
+            className="p-8 rounded-2xl bg-white border border-[#E3DBCC] shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between"
+          >
+            <div>
+              <div className="w-12 h-12 rounded-xl bg-[#F3F0E9] flex items-center justify-center text-[#101010] mb-6">
+                <ShieldCheck className="w-6 h-6 text-[#286B4A]" />
               </div>
-              <Link
-                to="/dashboard"
-                className="px-5 py-2.5 rounded-lg bg-[#101010] text-[#FDFCF8] text-xs font-semibold self-start md:self-center shrink-0 cursor-pointer"
-              >
-                View Activity Dashboard →
-              </Link>
+              <h3 className="text-lg font-bold uppercase tracking-tight text-[#101010] mb-2">
+                Audited Settlement
+              </h3>
+              <p className="text-xs sm:text-sm text-[#101010]/70 leading-relaxed">
+                Structured price negotiation, third-party lab quality clearance, and automated escrow release with zero chat friction.
+              </p>
             </div>
-          </div>
-        </div>
+            <Link
+              to="/dashboard"
+              className="mt-6 pt-4 border-t border-[#E3DBCC]/70 flex items-center gap-1.5 text-xs font-bold text-[#101010] hover:text-[#286B4A] transition-colors"
+            >
+              <span>View Commercial Ledger</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </motion.div>
+        </motion.div>
       </section>
 
-      {/* 4. INTERACTIVE SIMULATION: HOW RE:SOURCE PAIRS INDUSTRIAL STREAMS */}
-      <LiveDemoCard />
-
-      {/* 5. VALIDATED INDUSTRY PATHWAYS */}
-      <CrossIndustryProof />
-
-      {/* 6. FEATURED MARKETPLACE PREVIEW */}
-      <section className="w-full py-20 bg-[#F3F0E9] border-t border-b border-[#E3DBCC]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 gap-4">
+      {/* 4. VERIFIED INDUSTRIAL OFFERINGS (Clean Live Showcase) */}
+      <section className="w-full py-16 sm:py-24 bg-[#F3F0E9]/60 border-t border-b border-[#E3DBCC]">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 sm:mb-12 gap-4"
+          >
             <div>
-              <span className="text-xs font-mono uppercase tracking-widest text-[#101010]/55 font-bold">
+              <div className="text-xs font-mono uppercase tracking-widest text-[#101010]/55 font-bold mb-1">
                 Live Materials Registry
-              </span>
-              <h2 className="text-3xl font-black uppercase text-[#101010] mt-1">
+              </div>
+              <h2 className="text-2xl sm:text-3xl font-black uppercase text-[#101010] tracking-tight">
                 Verified Industrial Offerings
               </h2>
             </div>
             <Link
               to="/marketplace"
-              className="text-xs font-bold uppercase tracking-wider text-[#101010] hover:underline flex items-center gap-1 cursor-pointer"
+              className="text-xs font-bold uppercase tracking-wider text-[#101010] hover:underline flex items-center gap-1 cursor-pointer self-start sm:self-auto"
             >
-              Browse All Listings <ArrowRight className="w-4 h-4" />
+              <span>Browse All Listings</span>
+              <ArrowRight className="w-4 h-4" />
             </Link>
-          </div>
+          </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            className="grid grid-cols-1 md:grid-cols-3 gap-6"
+          >
             {featuredResources.map((resource) => (
-              <ResourceCard key={resource._id} resource={resource} />
+              <motion.div
+                key={resource._id}
+                variants={itemVariants}
+                whileHover={{ y: -4, transition: { duration: 0.2 } }}
+              >
+                <ResourceCard resource={resource} />
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
-      {/* 7. DUAL ENTRY CTA BANNER */}
-      <section className="w-full py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Marketplace route */}
-          <div className="card-ivory p-8 border border-[#E3DBCC] rounded-2xl flex flex-col justify-between">
-            <div>
-              <div className="text-xs font-mono uppercase tracking-widest text-[#101010]/55 font-bold mb-2">
-                Route A
-              </div>
-              <h3 className="text-2xl font-black uppercase text-[#101010] mb-3">
-                Industrial Marketplace
-              </h3>
-              <p className="text-sm text-[#101010]/70 leading-relaxed">
-                For companies searching for specific secondary raw materials with known particle,
-                moisture, and chemical specifications.
-              </p>
-            </div>
-            <Link
-              to="/marketplace"
-              className="mt-8 px-6 py-3.5 rounded-xl bg-[#101010] text-[#FDFCF8] text-xs font-bold text-center hover:bg-black transition-colors cursor-pointer"
-            >
-              Open Marketplace Catalog
-            </Link>
+      {/* 5. MINIMAL BOTTOM CALL-TO-ACTION (Clean & High Contrast) */}
+      <section className="w-full py-20 sm:py-28 max-w-5xl mx-auto px-4 sm:px-6">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.98 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="p-8 sm:p-14 rounded-3xl bg-[#101010] text-[#FDFCF8] text-center shadow-xl space-y-6"
+        >
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 text-white/80 text-[11px] font-mono uppercase tracking-wider font-semibold">
+            Circular Economy Platform
           </div>
 
-          {/* AI Discovery route */}
-          <div className="card-ivory p-8 border border-[#101010]/30 rounded-2xl flex flex-col justify-between bg-[#FDFCF8]">
-            <div>
-              <div className="text-xs font-mono uppercase tracking-widest text-[#101010]/55 font-bold mb-2 flex items-center gap-1">
-                <Sparkles className="w-3.5 h-3.5 text-[#101010]" /> Route B (Recommended)
-              </div>
-              <h3 className="text-2xl font-black uppercase text-[#101010] mb-3">
-                AI Discovery System
-              </h3>
-              <p className="text-sm text-[#101010]/70 leading-relaxed">
-                Tell us what virgin materials your company currently buys. AI automatically pairs
-                compatible by-products to displace costly extraction.
-              </p>
-            </div>
+          <h2 className="text-2xl sm:text-4xl font-black uppercase tracking-tight max-w-2xl mx-auto leading-tight">
+            Ready to turn industrial residuals into resources?
+          </h2>
+
+          <p className="text-xs sm:text-sm text-[#FDFCF8]/70 max-w-xl mx-auto font-normal leading-relaxed">
+            Join vetted manufacturing facilities, cement plants, and chemical producers sourcing circular raw materials.
+          </p>
+
+          <div className="pt-2 flex flex-wrap items-center justify-center gap-3.5">
+            <Link
+              to="/marketplace"
+              className="px-7 py-3.5 rounded-xl bg-[#FDFCF8] text-[#101010] hover:bg-white text-xs sm:text-sm font-bold uppercase tracking-wider transition-all shadow-md cursor-pointer"
+            >
+              Explore Marketplace
+            </Link>
+
             <Link
               to="/ai-discovery"
-              className="mt-8 px-6 py-3.5 rounded-xl bg-[#101010] text-[#FDFCF8] text-xs font-bold text-center hover:bg-black transition-colors cursor-pointer"
+              className="px-7 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-[#FDFCF8] text-xs sm:text-sm font-bold uppercase tracking-wider transition-all cursor-pointer flex items-center gap-2"
             >
-              Launch AI Alternative Matcher
+              <Sparkles className="w-4 h-4 text-[#B8D957]" />
+              <span>AI Material Matcher</span>
             </Link>
           </div>
-        </div>
+        </motion.div>
       </section>
 
       {/* Global List Resource Modal */}

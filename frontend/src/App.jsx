@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { Provider, useDispatch } from 'react-redux';
 import { store } from './store/store';
 import { fetchCurrentUser } from './store/slices/authSlice';
@@ -28,13 +28,16 @@ function AppInitializer({ children }) {
 }
 
 function AppContent() {
+  const location = useLocation();
+  const isHome = location.pathname === '/';
+
   return (
     <div className="min-h-screen flex flex-col bg-[#FDFCF8] text-[#101010] selection:bg-[#E3DBCC] selection:text-[#101010]">
       {/* Editorial Minimal Navbar */}
       <Navbar />
 
-      {/* Main Content Area */}
-      <main className="flex-1 w-full">
+      {/* Main Content Area - padded on non-home routes so floating glassmorphic navbar doesn't obscure content */}
+      <main className={`flex-1 w-full ${isHome ? '' : 'pt-20 sm:pt-24'}`}>
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/marketplace" element={<MarketplacePage />} />

@@ -32,6 +32,17 @@ export default function Navbar() {
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const profileDropdownRef = useRef(null);
 
+  const [scrolled, setScrolled] = useState(false);
+
+  // Track scroll position to enhance glassmorphism when scrolling
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   const isHome = location.pathname === '/';
   const isActive = (path) => location.pathname === path;
 
@@ -72,18 +83,15 @@ export default function Navbar() {
 
   return (
     <>
-      <header
-        className={`${
-          isHome
-            ? 'absolute top-4 sm:top-6 left-0 right-0 z-40 flex justify-center px-4 sm:px-6 pointer-events-none'
-            : 'sticky top-0 z-40 w-full bg-[#FDFCF8]/95 backdrop-blur-md border-b border-[#E3DBCC]'
-        } select-none`}
-      >
+      {/* 
+        Glassmorphism floating navbar persistently visible on scroll across all pages
+      */}
+      <header className="fixed top-3 sm:top-4 left-0 right-0 z-50 flex justify-center px-4 sm:px-6 pointer-events-none select-none transition-all duration-300">
         <div
-          className={`${
-            isHome
-              ? 'pointer-events-auto w-full max-w-7xl h-14 sm:h-16 px-5 sm:px-8 rounded-2xl sm:rounded-full bg-white/80 hover:bg-white/95 backdrop-blur-xl border border-white/60 shadow-[0_8px_32px_rgba(0,0,0,0.08)] flex items-center justify-between gap-4 transition-all duration-300'
-              : 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between gap-4'
+          className={`pointer-events-auto w-full max-w-7xl h-14 sm:h-16 px-5 sm:px-8 rounded-2xl sm:rounded-full transition-all duration-300 flex items-center justify-between gap-4 ${
+            scrolled
+              ? 'bg-white/85 backdrop-blur-2xl border border-white/60 shadow-[0_12px_40px_rgba(0,0,0,0.1)]'
+              : 'bg-white/70 hover:bg-white/85 backdrop-blur-xl border border-white/50 shadow-[0_8px_32px_rgba(0,0,0,0.06)]'
           }`}
         >
           {/* 1. LEFT SIDE: Logo */}
