@@ -65,9 +65,9 @@ export default function LandingPage() {
 
   return (
     <div className="w-full bg-[#FDFCF8] text-[#101010]">
-      {/* 1. CINEMATIC HERO SECTION WITH HIGH-GRADE INDUSTRIAL VIDEO */}
-      <section className="relative w-full min-h-[92vh] flex items-center justify-center overflow-hidden border-b border-[#E3DBCC]">
-        {/* Background Video / Atmospheric Poster */}
+      {/* 1. CINEMATIC HERO SECTION WITH HIGH-GRADE INDUSTRIAL VIDEO (100dvh - NO SCROLL NEEDED) */}
+      <section className="relative w-full h-[100dvh] min-h-[580px] max-h-[100dvh] flex flex-col items-center justify-center overflow-hidden border-b border-[#E3DBCC]">
+        {/* Full-screen Background Video / Atmospheric Poster */}
         <div className="absolute inset-0 w-full h-full overflow-hidden z-0 bg-black">
           <video
             ref={videoRef}
@@ -94,30 +94,30 @@ export default function LandingPage() {
           />
         </div>
 
-        {/* Hero Content */}
-        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-24 text-center">
+        {/* Hero Content - Perfectly Fitted in Viewport */}
+        <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 text-center pt-16 sm:pt-20">
           {/* Subtle Protocol Badge */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#F3F0E9] border border-[#E3DBCC] text-[11px] font-mono font-semibold uppercase tracking-wider text-[#101010] mb-6 shadow-xs">
-            <span className="w-2 h-2 rounded-full bg-[#101010]" />
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/80 backdrop-blur-md border border-[#E3DBCC] text-[11px] font-mono font-semibold uppercase tracking-wider text-[#101010] mb-4 sm:mb-5 shadow-xs">
+            <span className="w-2 h-2 rounded-full bg-[#286B4A]" />
             Audited B2B Secondary Materials Network
           </div>
 
           {/* Headline */}
-          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight text-[#101010] uppercase max-w-4xl mx-auto leading-[1.04]">
+          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-[#101010] uppercase max-w-3xl mx-auto leading-[1.06]">
             Turn Industrial Residuals Into Resources.
           </h1>
 
           {/* Subheading */}
-          <p className="mt-6 text-lg sm:text-xl text-[#101010]/75 max-w-2xl mx-auto leading-relaxed font-normal">
+          <p className="mt-4 sm:mt-5 text-sm sm:text-base lg:text-lg text-[#101010]/80 max-w-xl mx-auto leading-relaxed font-normal">
             Discover materials, connect with industrial suppliers, and uncover by-products that
             could replace conventional raw materials.
           </p>
 
           {/* Primary Action Buttons */}
-          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-3.5">
+          <div className="mt-6 sm:mt-8 flex flex-wrap items-center justify-center gap-3">
             <Link
               to="/marketplace"
-              className="w-full sm:w-auto px-8 py-4 rounded-xl bg-[#101010] text-[#FDFCF8] text-sm font-bold tracking-wide hover:bg-black transition-all shadow-md flex items-center justify-center gap-2 group cursor-pointer"
+              className="px-6 py-3 rounded-xl bg-[#101010] text-[#FDFCF8] text-xs sm:text-sm font-bold tracking-wide hover:bg-black transition-all shadow-md flex items-center justify-center gap-2 group cursor-pointer"
             >
               Explore Marketplace
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -125,43 +125,44 @@ export default function LandingPage() {
 
             <Link
               to="/ai-discovery"
-              className="w-full sm:w-auto px-8 py-4 rounded-xl bg-[#F3F0E9] hover:bg-[#E3DBCC] text-[#101010] border border-[#E3DBCC] text-sm font-bold tracking-wide transition-all shadow-xs flex items-center justify-center gap-2 cursor-pointer"
+              className="px-6 py-3 rounded-xl bg-white/80 hover:bg-white text-[#101010] border border-[#E3DBCC] text-xs sm:text-sm font-bold tracking-wide backdrop-blur-md transition-all shadow-xs flex items-center justify-center gap-2 cursor-pointer"
             >
-              <Sparkles className="w-4 h-4 text-[#101010]" />
+              <Sparkles className="w-4 h-4 text-[#286B4A]" />
               Discover Alternatives
             </Link>
 
             <button
               type="button"
               onClick={() => setDemoOpen(true)}
-              className="w-full sm:w-auto px-6 py-4 rounded-xl bg-white/70 hover:bg-white text-[#101010] border border-[#E3DBCC] text-sm font-bold tracking-wide transition-all flex items-center justify-center gap-2 cursor-pointer"
+              className="px-5 py-3 rounded-xl bg-white/60 hover:bg-white/90 text-[#101010] border border-[#E3DBCC] text-xs sm:text-sm font-bold tracking-wide backdrop-blur-md transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
-              <Play className="w-4 h-4 text-[#101010] fill-current" />
+              <Play className="w-3.5 h-3.5 text-[#101010] fill-current" />
               Watch Video Story
             </button>
           </div>
 
-          {/* Smaller CTA */}
-          <div className="mt-4">
-            <button
-              type="button"
-              onClick={() => setListModalOpen(true)}
-              className="text-xs text-[#101010]/70 hover:text-[#101010] font-semibold underline underline-offset-4 cursor-pointer"
-            >
-              Have by-products? List a Resource →
-            </button>
-          </div>
-
           {/* Industrial Flow Pill */}
-          <div className="mt-12 inline-flex flex-wrap items-center justify-center gap-2 sm:gap-4 py-2.5 px-5 rounded-lg bg-[#FDFCF8]/95 border border-[#E3DBCC] text-xs font-mono text-[#101010]/80 shadow-xs">
+          <div className="mt-6 sm:mt-8 inline-flex flex-wrap items-center justify-center gap-2 sm:gap-3 py-2 px-4 rounded-xl bg-white/70 backdrop-blur-md border border-[#E3DBCC] text-[11px] font-mono text-[#101010]/80 shadow-xs">
             <span className="font-bold text-[#101010]">Industrial facility</span>
             <span className="text-[#101010]/40">→</span>
             <span>Residual / Waste</span>
             <span className="text-[#101010]/40">→</span>
-            <span className="font-bold text-[#101010]">Resource</span>
+            <span className="font-bold text-[#286B4A]">Resource</span>
             <span className="text-[#101010]/40">→</span>
-            <span>Another industrial use</span>
+            <span>Secondary manufacturing</span>
           </div>
+        </div>
+
+        {/* Bottom Scroll Indicator Pill */}
+        <div className="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 z-20">
+          <button
+            type="button"
+            onClick={() => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-md border border-white/20 text-[10px] font-mono tracking-widest text-white/90 uppercase transition-all cursor-pointer"
+          >
+            <span>SCROLL</span>
+            <span className="animate-bounce">↓</span>
+          </button>
         </div>
 
         {/* Ambient Video Audio Controls (Floating Button in Corner) */}

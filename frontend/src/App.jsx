@@ -16,6 +16,7 @@ import DealWorkspacePage from './pages/DealWorkspacePage';
 import DashboardPage from './pages/DashboardPage';
 import ImpactPage from './pages/ImpactPage';
 import AdminPortalPage from './pages/AdminPortalPage';
+import RegisterPage from './pages/RegisterPage';
 
 function AppInitializer({ children }) {
   const dispatch = useDispatch();
@@ -45,6 +46,8 @@ function AppContent() {
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/impact" element={<ImpactPage />} />
           <Route path="/admin" element={<AdminPortalPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/signup" element={<RegisterPage />} />
         </Routes>
       </main>
 
