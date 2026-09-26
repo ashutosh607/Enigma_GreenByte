@@ -16,6 +16,7 @@ frontend/.env.*
 dist/
 dist-ssr/
 *.mp4
+!frontend/src/assets/landingpagevd.mp4
 
 
 # Logs
