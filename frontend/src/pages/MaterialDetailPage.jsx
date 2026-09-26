@@ -13,6 +13,7 @@ import {
   DollarSign,
   CreditCard,
 } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { resourceApi, dealApi, paymentApi } from '../services/api';
 import MaterialPassport from '../components/MaterialPassport';
 
@@ -119,7 +120,12 @@ export default function MaterialDetailPage() {
         </Link>
 
         {/* Top Header Card */}
-        <div className="card-ivory p-6 md:p-8 border border-[#E3DBCC] rounded-2xl mb-8">
+        <motion.div
+          initial={{ opacity: 0, y: 18 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, ease: 'easeOut' }}
+          className="card-ivory p-6 md:p-8 border border-[#E3DBCC] rounded-2xl mb-8"
+        >
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
             <div>
               <div className="flex flex-wrap items-center gap-2 mb-2">
@@ -211,10 +217,15 @@ export default function MaterialDetailPage() {
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
 
         {/* Two-Column Technical Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <motion.div
+          initial={{ opacity: 0, y: 22 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45, delay: 0.1, ease: 'easeOut' }}
+          className="grid grid-cols-1 lg:grid-cols-3 gap-8"
+        >
           {/* Left Column: Material Passport & Properties */}
           <div className="lg:col-span-2 space-y-8">
             {/* Description */}
@@ -293,7 +304,7 @@ export default function MaterialDetailPage() {
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
     </div>
   );

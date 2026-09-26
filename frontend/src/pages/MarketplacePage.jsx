@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import {
   Search,
   SlidersHorizontal,
@@ -113,7 +114,12 @@ export default function MarketplacePage() {
     <div className="w-full min-h-screen bg-[#FDFCF8] text-[#101010] py-8 sm:py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 sm:space-y-8">
         {/* Marketplace Header: Title on Left, Pill Search + Filters on Right */}
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-2">
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-2"
+        >
           {/* Left Column: Badge, Title, Subtitle */}
           <div>
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#F3F0E9] border border-[#E3DBCC] text-[11px] font-mono font-bold uppercase tracking-wider text-[#101010] mb-3 shadow-xs">
@@ -150,10 +156,15 @@ export default function MarketplacePage() {
               <span>Filters</span>
             </button>
           </div>
-        </div>
+        </motion.div>
 
         {/* Category Filter Pills Row (as in reference image) */}
-        <div className="flex items-center gap-2.5 overflow-x-auto pb-2 scrollbar-none">
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.08 }}
+          className="flex items-center gap-2.5 overflow-x-auto pb-2 scrollbar-none"
+        >
           {CATEGORY_TABS.map((tab) => {
             const Icon = tab.icon;
             const isSelected = activeCategory === tab.id;
@@ -174,7 +185,7 @@ export default function MarketplacePage() {
               </button>
             );
           })}
-        </div>
+        </motion.div>
 
         {/* Expandable Parameter Filters Drawer */}
         {showFilters && (
@@ -289,11 +300,31 @@ export default function MarketplacePage() {
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7">
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={{
+              hidden: { opacity: 0 },
+              visible: {
+                opacity: 1,
+                transition: { staggerChildren: 0.07 },
+              },
+            }}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7"
+          >
             {filteredItems.map((resource) => (
-              <ResourceCard key={resource._id} resource={resource} />
+              <motion.div
+                key={resource._id}
+                variants={{
+                  hidden: { opacity: 0, y: 20 },
+                  visible: { opacity: 1, y: 0, transition: { duration: 0.35, ease: 'easeOut' } },
+                }}
+                whileHover={{ y: -4, transition: { duration: 0.2 } }}
+              >
+                <ResourceCard resource={resource} />
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         )}
       </div>
     </div>
