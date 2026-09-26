@@ -4,6 +4,12 @@ An executable FastAPI service for the optional AI mode of your marketplace. It i
 
 This is a working hackathon backend, not a trained predictor of successful industrial exchanges. A research route is a candidate; specifications, process arrangements and buyer acceptance still need confirmation. No universal waste certificate is required or generated.
 
+## Frontend team: start here
+
+Read [the plain-language frontend handoff](docs/FRONTEND_START_HERE.md) first. It explains which screen calls which endpoint, what to show, how to test with the demo companies, and what your marketplace team still needs to connect. Then use [the API guide](docs/API.md) or `/docs` for exact field names.
+
+Read [the simple AI architecture explanation](docs/AI_ARCHITECTURE_SIMPLE.md) to understand how the matching system works without needing to read the code. The current default is keyword/alias matching; semantic matching uses a pretrained embedding model only when explicitly enabled.
+
 ## Start locally
 
 From this folder, with Python 3.11 or newer:
