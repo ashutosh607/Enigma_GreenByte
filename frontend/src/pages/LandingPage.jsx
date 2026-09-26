@@ -13,9 +13,6 @@ import {
   Truck,
   Leaf,
   Lock,
-  Play,
-  Volume2,
-  VolumeX,
 } from 'lucide-react';
 import { resourceApi, impactApi } from '../services/api';
 import ResourceCard from '../components/ResourceCard';
@@ -32,7 +29,6 @@ export default function LandingPage() {
   const [impactMetrics, setImpactMetrics] = useState(null);
   const [listModalOpen, setListModalOpen] = useState(false);
   const [demoOpen, setDemoOpen] = useState(false);
-  const [isMuted, setIsMuted] = useState(true);
   const [videoLoaded, setVideoLoaded] = useState(false);
   const videoRef = useRef(null);
 
@@ -55,14 +51,6 @@ export default function LandingPage() {
       .catch(() => {});
   }, []);
 
-  const toggleMute = () => {
-    if (videoRef.current) {
-      const nextMuted = !videoRef.current.muted;
-      videoRef.current.muted = nextMuted;
-      setIsMuted(nextMuted);
-    }
-  };
-
   return (
     <div className="w-full bg-[#FDFCF8] text-[#101010]">
       {/* 1. CINEMATIC HERO SECTION WITH HIGH-GRADE INDUSTRIAL VIDEO (100dvh - NO SCROLL NEEDED) */}
@@ -73,7 +61,7 @@ export default function LandingPage() {
             ref={videoRef}
             autoPlay
             loop
-            muted={isMuted}
+            muted
             playsInline
             preload="auto"
             src={factoryVideo}
@@ -94,30 +82,18 @@ export default function LandingPage() {
           />
         </div>
 
-        {/* Hero Content - Perfectly Fitted in Viewport */}
+        {/* Hero Content - Focused Headline and Direct CTAs */}
         <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 text-center pt-16 sm:pt-20">
-          {/* Subtle Protocol Badge */}
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/80 backdrop-blur-md border border-[#E3DBCC] text-[11px] font-mono font-semibold uppercase tracking-wider text-[#101010] mb-4 sm:mb-5 shadow-xs">
-            <span className="w-2 h-2 rounded-full bg-[#286B4A]" />
-            Audited B2B Secondary Materials Network
-          </div>
-
           {/* Headline */}
           <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-[#101010] uppercase max-w-3xl mx-auto leading-[1.06]">
             Turn Industrial Residuals Into Resources.
           </h1>
 
-          {/* Subheading */}
-          <p className="mt-4 sm:mt-5 text-sm sm:text-base lg:text-lg text-[#101010]/80 max-w-xl mx-auto leading-relaxed font-normal">
-            Discover materials, connect with industrial suppliers, and uncover by-products that
-            could replace conventional raw materials.
-          </p>
-
           {/* Primary Action Buttons */}
-          <div className="mt-6 sm:mt-8 flex flex-wrap items-center justify-center gap-3">
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-3.5">
             <Link
               to="/marketplace"
-              className="px-6 py-3 rounded-xl bg-[#101010] text-[#FDFCF8] text-xs sm:text-sm font-bold tracking-wide hover:bg-black transition-all shadow-md flex items-center justify-center gap-2 group cursor-pointer"
+              className="px-7 py-3.5 rounded-xl bg-[#101010] text-[#FDFCF8] text-xs sm:text-sm font-bold tracking-wide hover:bg-black transition-all shadow-md flex items-center justify-center gap-2 group cursor-pointer"
             >
               Explore Marketplace
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -125,31 +101,11 @@ export default function LandingPage() {
 
             <Link
               to="/ai-discovery"
-              className="px-6 py-3 rounded-xl bg-white/80 hover:bg-white text-[#101010] border border-[#E3DBCC] text-xs sm:text-sm font-bold tracking-wide backdrop-blur-md transition-all shadow-xs flex items-center justify-center gap-2 cursor-pointer"
+              className="px-7 py-3.5 rounded-xl bg-white/85 hover:bg-white text-[#101010] border border-[#E3DBCC] text-xs sm:text-sm font-bold tracking-wide backdrop-blur-md transition-all shadow-xs flex items-center justify-center gap-2 cursor-pointer"
             >
               <Sparkles className="w-4 h-4 text-[#286B4A]" />
               Discover Alternatives
             </Link>
-
-            <button
-              type="button"
-              onClick={() => setDemoOpen(true)}
-              className="px-5 py-3 rounded-xl bg-white/60 hover:bg-white/90 text-[#101010] border border-[#E3DBCC] text-xs sm:text-sm font-bold tracking-wide backdrop-blur-md transition-all flex items-center justify-center gap-2 cursor-pointer"
-            >
-              <Play className="w-3.5 h-3.5 text-[#101010] fill-current" />
-              Watch Video Story
-            </button>
-          </div>
-
-          {/* Industrial Flow Pill */}
-          <div className="mt-6 sm:mt-8 inline-flex flex-wrap items-center justify-center gap-2 sm:gap-3 py-2 px-4 rounded-xl bg-white/70 backdrop-blur-md border border-[#E3DBCC] text-[11px] font-mono text-[#101010]/80 shadow-xs">
-            <span className="font-bold text-[#101010]">Industrial facility</span>
-            <span className="text-[#101010]/40">→</span>
-            <span>Residual / Waste</span>
-            <span className="text-[#101010]/40">→</span>
-            <span className="font-bold text-[#286B4A]">Resource</span>
-            <span className="text-[#101010]/40">→</span>
-            <span>Secondary manufacturing</span>
           </div>
         </div>
 
@@ -162,28 +118,6 @@ export default function LandingPage() {
           >
             <span>SCROLL</span>
             <span className="animate-bounce">↓</span>
-          </button>
-        </div>
-
-        {/* Ambient Video Audio Controls (Floating Button in Corner) */}
-        <div className="absolute right-5 bottom-5 z-20">
-          <button
-            type="button"
-            onClick={toggleMute}
-            className="flex items-center gap-2 px-3.5 py-2 rounded-full bg-[#101010]/80 hover:bg-[#101010] text-[#FDFCF8] text-xs font-mono font-bold backdrop-blur-md shadow-md transition-all cursor-pointer"
-            title={isMuted ? 'Click to enable ambient factory audio' : 'Click to mute audio'}
-          >
-            {isMuted ? (
-              <>
-                <VolumeX className="w-4 h-4 text-[#FDFCF8]" />
-                <span className="hidden sm:inline">Audio Muted</span>
-              </>
-            ) : (
-              <>
-                <Volume2 className="w-4 h-4 text-emerald-400 animate-pulse" />
-                <span className="hidden sm:inline">Sound Active</span>
-              </>
-            )}
           </button>
         </div>
       </section>
