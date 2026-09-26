@@ -200,7 +200,8 @@ export default function DealWorkspacePage() {
         transactionNotes: 'Real-time corporate clearing settled into RE:SOURCE Escrow Account',
       });
       setPaymentSuccess(true);
-      dispatch(fetchDealById(deal._id));
+      await dispatch(fetchDealById(deal._id));
+      setActiveTab('fulfillment');
     } catch (err) {
       alert(err.response?.data?.message || 'Payment processing failed');
     } finally {
@@ -837,35 +838,43 @@ export default function DealWorkspacePage() {
               </div>
 
               {/* Escrow Deposit Action (Section 38) */}
-              <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-                <div className="text-xs text-[#101010]/60">
-                  {deal.status === 'Payment Completed' || paymentSuccess ? (
-                    <span className="font-semibold text-[#101010] flex items-center gap-1.5">
-                      <CheckCircle2 className="w-4 h-4 text-[#101010]" /> 100% Escrow deposit cleared & verified. Supplier cleared to dispatch.
-                    </span>
-                  ) : (
-                    'Deposit is held in third-party Escrow until buyer inspection and quality signoff.'
-                  )}
-                </div>
+              <div className="pt-6">
+                {deal.status === 'Payment Completed' || paymentSuccess ? (
+                  <div className="p-5 rounded-2xl bg-[#ECFDF5] border border-[#A7F3D0] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                      <div className="flex items-center gap-2 text-[#065F46] font-bold text-sm">
+                        <CheckCircle2 className="w-5 h-5 text-[#059669]" />
+                        <span>Escrow Payment Confirmed & Vault Cleared!</span>
+                      </div>
+                      <p className="text-xs text-[#065F46]/80 mt-1 font-mono">
+                        Consignment is authorized for tare weighing and carrier haulage dispatch.
+                      </p>
+                    </div>
 
-                {deal.status !== 'Payment Completed' && !paymentSuccess ? (
-                  <button
-                    type="button"
-                    onClick={handleExecutePayment}
-                    disabled={paymentProcessing}
-                    className="px-8 py-3.5 rounded-xl bg-[#101010] text-[#FDFCF8] text-xs font-bold hover:bg-black transition-all flex items-center gap-2 cursor-pointer shadow-md disabled:opacity-50"
-                  >
-                    <CreditCard className="w-4 h-4" />
-                    {paymentProcessing ? 'Verifying with Gateway Clearinghouse...' : 'Proceed to Escrow Deposit'}
-                  </button>
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab('fulfillment')}
+                      className="px-6 py-3 rounded-full bg-[#101010] text-white text-xs font-bold uppercase tracking-wider hover:bg-black transition-all flex items-center gap-2 shadow-sm shrink-0 cursor-pointer"
+                    >
+                      <span>Proceed to Live Dispatch & Telematics →</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </button>
+                  </div>
                 ) : (
-                  <button
-                    type="button"
-                    onClick={() => setActiveTab('fulfillment')}
-                    className="px-6 py-3 rounded-xl bg-[#101010] text-[#FDFCF8] text-xs font-bold hover:bg-black transition-all"
-                  >
-                    Track Dispatch & Delivery →
-                  </button>
+                  <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div className="text-xs text-[#101010]/60">
+                      Deposit is held in third-party Escrow until buyer inspection and quality signoff.
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleExecutePayment}
+                      disabled={paymentProcessing}
+                      className="px-8 py-3.5 rounded-full bg-[#101010] text-[#FDFCF8] text-xs font-bold uppercase tracking-wider hover:bg-black transition-all flex items-center gap-2 cursor-pointer shadow-md disabled:opacity-50"
+                    >
+                      <CreditCard className="w-4 h-4" />
+                      {paymentProcessing ? 'Verifying with Gateway Clearinghouse...' : 'Proceed to Escrow Deposit'}
+                    </button>
+                  </div>
                 )}
               </div>
             </div>

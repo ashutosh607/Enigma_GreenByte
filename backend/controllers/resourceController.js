@@ -34,7 +34,41 @@ const getResources = async (req, res) => {
     }
 
     if (category && category !== "All") {
-      query.category = category;
+      const catLower = category.toLowerCase();
+      if (catLower.includes("metal") || catLower.includes("alloy")) {
+        query.$or = [
+          { title: { $regex: "metal|alloy|steel|slag|iron|scrap|metallurg", $options: "i" } },
+          { description: { $regex: "metal|alloy|steel|slag|iron|metallurg", $options: "i" } },
+          { tags: { $in: [/metal/i, /alloy/i, /steel/i, /slag/i, /metallurgy/i] } },
+        ];
+      } else if (catLower.includes("construction")) {
+        query.$or = [
+          { title: { $regex: "construction|slag|fly ash|sand|gypsum|cement|aggregate|concrete|pozzolan", $options: "i" } },
+          { description: { $regex: "construction|slag|fly ash|sand|gypsum|cement|aggregate|concrete", $options: "i" } },
+          { tags: { $in: [/construction/i, /aggregate/i, /slag/i, /cement/i, /paving/i] } },
+        ];
+      } else if (catLower.includes("machin") || catLower.includes("equip")) {
+        query.$or = [
+          { title: { $regex: "machin|equip|crusher|kiln|mill|conveyor|furnace", $options: "i" } },
+          { description: { $regex: "machin|equip|crusher|kiln|mill|conveyor", $options: "i" } },
+        ];
+      } else if (catLower.includes("chem")) {
+        query.$or = [
+          { title: { $regex: "chem|caustic|acid|phospho|sulfur|alkali|brine", $options: "i" } },
+          { description: { $regex: "chem|caustic|acid|phospho|sulfur", $options: "i" } },
+        ];
+      } else if (catLower.includes("textil")) {
+        query.$or = [
+          { title: { $regex: "textil|cotton|fiber|fabric|yarn", $options: "i" } },
+          { description: { $regex: "textil|cotton|fiber|fabric|yarn", $options: "i" } },
+        ];
+      } else {
+        query.$or = [
+          { category: category },
+          { tags: { $in: [new RegExp(category, "i")] } },
+          { title: { $regex: category, $options: "i" } },
+        ];
+      }
     }
 
     if (stateOfMatter && stateOfMatter !== "All") {
