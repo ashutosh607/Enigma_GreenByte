@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ps5-ai-backend"
+version = "0.1.0"
+description = "Evidence-backed industrial symbiosis discovery API"
+requires-python = ">=3.11"
+dependencies = ["fastapi==0.141.1", "uvicorn==0.54.0", "httpx==0.28.1", "pydantic==2.13.5"]
+
+[project.optional-dependencies]
+test = ["pytest==9.1.1"]
+embeddings = ["sentence-transformers>=3.1,<6"]
+
+[tool.setuptools]
+packages = ["ps5"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
