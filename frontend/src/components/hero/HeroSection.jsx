@@ -4,7 +4,7 @@ import HeroContent from './HeroContent';
 import FloatingControls from './FloatingControls';
 import DemoModal from './DemoModal';
 
-const factoryVideo = '/assets/video/industrial-hero.mp4';
+import factoryVideo from '@/assets/landingpagevd.mp4';
 
 export default function HeroSection() {
   const videoRef = useRef(null);
@@ -12,23 +12,31 @@ export default function HeroSection() {
   const [demoOpen, setDemoOpen] = useState(false);
   const [videoLoaded, setVideoLoaded] = useState(false);
 
-  // Check prefers-reduced-motion
+  // Ensure video plays reliably on mount & handle motion preference
   useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    video.defaultMuted = true;
+    video.muted = true;
+
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
     const handleMotionPreference = () => {
-      if (videoRef.current) {
-        if (mediaQuery.matches) {
-          videoRef.current.pause();
-        } else {
-          videoRef.current.play().catch(() => {
-            // Autoplay policy fallback
-          });
-        }
+      if (mediaQuery.matches) {
+        video.pause();
+      } else {
+        video.play().catch((err) => {
+          console.warn("Autoplay attempt failed:", err);
+        });
       }
     };
 
     handleMotionPreference();
     mediaQuery.addEventListener('change', handleMotionPreference);
+
+    // Initial play trigger
+    video.play().catch(() => {});
+
     return () => mediaQuery.removeEventListener('change', handleMotionPreference);
   }, []);
 
@@ -51,38 +59,37 @@ export default function HeroSection() {
       className="relative w-full h-[100dvh] min-h-[640px] flex items-center justify-center overflow-hidden select-none"
       aria-label="Hero Section"
     >
-      {/* 1. Full-screen Cinematic Background Video */}
-      <div className="absolute inset-0 w-full h-full overflow-hidden">
+      {/* 1. Full-screen Cinematic Background Video from src/assets/landingpagevd.mp4 */}
+      <div className="absolute inset-0 w-full h-full overflow-hidden bg-black">
         <video
           ref={videoRef}
           autoPlay
           loop
           muted
           playsInline
+          preload="auto"
+          src={factoryVideo}
           onLoadedData={() => setVideoLoaded(true)}
           poster="/assets/video/industrial-hero-poster.jpg"
-          className={`absolute inset-0 w-full h-full object-cover object-center pointer-events-none transition-opacity duration-1000 ${
-            videoLoaded ? 'opacity-100' : 'opacity-90'
-          }`}
+          className="absolute inset-0 w-full h-full object-cover object-center pointer-events-none"
         >
-          {/* Direct Vite-bundled import */}
           <source src={factoryVideo} type="video/mp4" />
         </video>
       </div>
 
       {/* 2. Tuned Video Scrim / Overlay for Haven-style Visual Balance */}
-      {/* Radial soft glow behind the text so dark typography pops crisply while keeping the factory natural */}
+      {/* Subtle radial center diffusion for text clarity without obscuring factory motion */}
       <div 
         className="absolute inset-0 pointer-events-none"
         style={{
-          background: 'radial-gradient(ellipse 70% 55% at 50% 42%, rgba(255, 255, 255, 0.68) 0%, rgba(255, 255, 255, 0.38) 35%, rgba(245, 247, 244, 0.12) 65%, rgba(23, 35, 29, 0.28) 100%)'
+          background: 'radial-gradient(ellipse 65% 50% at 50% 42%, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0.2) 45%, transparent 80%)'
         }}
       />
-      {/* Gentle vertical edge vignette for top nav and bottom contrast */}
+      {/* Gentle vertical edge vignette for top navbar and bottom scroll indicator contrast */}
       <div 
         className="absolute inset-0 pointer-events-none"
         style={{
-          background: 'linear-gradient(to bottom, rgba(23, 35, 29, 0.14) 0%, rgba(255, 255, 255, 0) 18%, rgba(255, 255, 255, 0) 65%, rgba(23, 35, 29, 0.35) 100%)'
+          background: 'linear-gradient(to bottom, rgba(23, 35, 29, 0.2) 0%, transparent 20%, transparent 70%, rgba(23, 35, 29, 0.4) 100%)'
         }}
       />
 
