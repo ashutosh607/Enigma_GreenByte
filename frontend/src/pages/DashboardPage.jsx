@@ -1030,8 +1030,18 @@ export default function DashboardPage() {
                                   {materialTitle}
                                 </h3>
 
-                                <div className="text-xs text-[#101010]/70 font-mono">
-                                  Supplier: <span className="font-bold text-[#101010]">{supplierName}</span>
+                                <div className="space-y-1 mt-1">
+                                  <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#ECFDF5] border border-[#A7F3D0] text-[10px] font-mono font-bold text-[#065F46]">
+                                    <ShieldCheck className="w-3 h-3 text-[#059669]" />
+                                    <span>Identity Revealed (Payment Confirmed)</span>
+                                  </div>
+                                  <div className="text-xs text-[#101010] font-mono">
+                                    Supplier: <span className="font-bold text-[#101010]">{supplierName}</span>
+                                    <span className="text-[#101010]/50 ml-1.5">({deal.seller?.industry || 'Verified Industrial Producer'})</span>
+                                  </div>
+                                  <div className="text-[11px] text-[#101010]/60 font-mono">
+                                    Plant Dispatch: {deal.seller?.location?.city || deal.resource?.location?.city || 'Pune'}, {deal.seller?.location?.state || deal.resource?.location?.state || 'Maharashtra'} • GSTIN: {deal.seller?.gstNumber || '27AAACT2727Q1ZB'}
+                                  </div>
                                 </div>
                               </div>
                             </div>
@@ -1622,6 +1632,86 @@ export default function DashboardPage() {
                       onChange={(e) => setProductForm({ ...productForm, description: e.target.value })}
                       className="w-full px-3.5 py-2.5 rounded-xl border border-[#E3DBCC] bg-white text-sm text-[#101010] focus:outline-none focus:border-[#101010]"
                     />
+                  </div>
+
+                  {/* Company Identity & Confidentiality Selector */}
+                  <div className="p-4 sm:p-5 rounded-2xl border border-[#E3DBCC] bg-[#FDFCF8] space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        {productForm.identityVisibility === 'Confidential' ? (
+                          <Lock className="w-4 h-4 text-[#065F46]" />
+                        ) : (
+                          <Building2 className="w-4 h-4 text-[#101010]" />
+                        )}
+                        <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#101010]">
+                          Listing Confidentiality & Identity Protection
+                        </span>
+                      </div>
+                      <span className={`text-[10px] font-mono font-bold uppercase px-2.5 py-0.5 rounded-full ${
+                        productForm.identityVisibility === 'Confidential'
+                          ? 'bg-[#ECFDF5] text-[#065F46] border border-[#A7F3D0]'
+                          : 'bg-[#F3F0E9] text-[#101010] border border-[#E3DBCC]'
+                      }`}>
+                        {productForm.identityVisibility === 'Confidential' ? 'Identity Protected' : 'Public Listing'}
+                      </span>
+                    </div>
+
+                    <p className="text-xs text-[#101010]/70">
+                      Choose whether your company name and exact plant details are visible publicly or masked under RE:SOURCE Confidentiality Protocol.
+                    </p>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                      {/* Public Option */}
+                      <div
+                        onClick={() => setProductForm({ ...productForm, identityVisibility: 'Open' })}
+                        className={`p-3.5 rounded-xl border cursor-pointer transition-all ${
+                          productForm.identityVisibility === 'Open'
+                            ? 'bg-white border-[#101010] shadow-xs ring-1 ring-[#101010]'
+                            : 'bg-[#F3F0E9]/50 border-[#E3DBCC] hover:bg-white'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2 mb-1">
+                          <input
+                            type="radio"
+                            name="identityVisibility"
+                            checked={productForm.identityVisibility === 'Open'}
+                            onChange={() => setProductForm({ ...productForm, identityVisibility: 'Open' })}
+                            className="accent-[#101010]"
+                          />
+                          <span className="text-xs font-bold text-[#101010]">Public Listing</span>
+                        </div>
+                        <p className="text-[11px] text-[#101010]/60 pl-5">
+                          Display your company name ({user?.company?.name || 'Your Company'}) and location openly to all marketplace buyers.
+                        </p>
+                      </div>
+
+                      {/* Confidential Option */}
+                      <div
+                        onClick={() => setProductForm({ ...productForm, identityVisibility: 'Confidential' })}
+                        className={`p-3.5 rounded-xl border cursor-pointer transition-all ${
+                          productForm.identityVisibility === 'Confidential'
+                            ? 'bg-[#F0FDF4] border-[#065F46] shadow-xs ring-1 ring-[#065F46]'
+                            : 'bg-[#F3F0E9]/50 border-[#E3DBCC] hover:bg-white'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2 mb-1">
+                          <input
+                            type="radio"
+                            name="identityVisibility"
+                            checked={productForm.identityVisibility === 'Confidential'}
+                            onChange={() => setProductForm({ ...productForm, identityVisibility: 'Confidential' })}
+                            className="accent-[#065F46]"
+                          />
+                          <span className="text-xs font-bold text-[#065F46] flex items-center gap-1">
+                            <Lock className="w-3 h-3 text-[#059669]" />
+                            <span>Confidential (Hide Company Info)</span>
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-[#065F46]/85 pl-5 font-medium">
+                          Masks identity as &quot;Verified Confidential Supplier&quot;. Your company name and dispatch address are <strong>only revealed to the buyer AFTER escrow payment is confirmed</strong>.
+                        </p>
+                      </div>
+                    </div>
                   </div>
 
                   <div className="flex items-center justify-end gap-3 pt-4 border-t border-[#E3DBCC]">

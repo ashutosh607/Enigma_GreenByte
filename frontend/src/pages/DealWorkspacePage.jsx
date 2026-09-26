@@ -295,12 +295,33 @@ export default function DealWorkspacePage() {
                   <span className="text-[10px] font-mono uppercase text-[#101010]/50 block">
                     Supplier
                   </span>
-                  <span className="font-semibold text-[#101010] flex items-center gap-1">
-                    {deal.confidentiality?.isConfidentialToBuyer && (
-                      <Lock className="w-3.5 h-3.5 text-[#101010]" />
-                    )}
-                    {deal.seller?.name || 'Tata Metaliks & Foundry Division'}
-                  </span>
+                  {deal.confidentiality?.isConfidentialToBuyer || deal.resource?.identityVisibility === 'Confidential' ? (
+                    isPaid ? (
+                      <div className="space-y-0.5">
+                        <span className="font-bold text-[#101010] flex items-center gap-1.5">
+                          <span className="text-[#059669]">🔓</span>
+                          {deal.seller?.name || 'Tata Metaliks & Foundry Division'}
+                        </span>
+                        <span className="text-[10px] font-mono text-[#065F46] font-semibold block">
+                          Identity Unlocked (Payment Confirmed)
+                        </span>
+                      </div>
+                    ) : (
+                      <div className="space-y-0.5">
+                        <span className="font-semibold text-[#101010] flex items-center gap-1">
+                          <Lock className="w-3.5 h-3.5 text-[#065F46]" />
+                          Verified Confidential Supplier
+                        </span>
+                        <span className="text-[10px] font-mono text-[#101010]/50 block">
+                          Identity revealed upon escrow payment
+                        </span>
+                      </div>
+                    )
+                  ) : (
+                    <span className="font-semibold text-[#101010] flex items-center gap-1">
+                      {deal.seller?.name || 'Tata Metaliks & Foundry Division'}
+                    </span>
+                  )}
                 </div>
 
                 <div>

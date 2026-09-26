@@ -55,7 +55,7 @@ const requireAuth = (req, res, next) => {
   next();
 };
 
-const sanitizeResourceForViewer = (resource, viewerCompanyId) => {
+const sanitizeResourceForViewer = (resource, viewerCompanyId, isPaid = false) => {
   if (!resource) return resource;
   const resObj = resource.toObject ? resource.toObject() : { ...resource };
 
@@ -65,13 +65,15 @@ const sanitizeResourceForViewer = (resource, viewerCompanyId) => {
     (resObj.seller._id ? resObj.seller._id.toString() : resObj.seller.toString()) ===
       viewerCompanyId.toString();
 
-  if (resObj.identityVisibility === "Confidential" && !isSellerSelf) {
+  if (resObj.identityVisibility === "Confidential" && !isSellerSelf && !isPaid) {
     resObj.seller = {
       _id: resObj.seller?._id || "confidential",
       name: "🔐 Verified Confidential Supplier",
       industry: resObj.seller?.industry || "Industrial Metallurgy / Refining",
       verificationStatus: "Verified",
       isConfidential: true,
+      identityRevealed: false,
+      revealUponPayment: true,
       location: {
         region: resObj.location?.region || "Western India",
         state: resObj.location?.state || "Maharashtra",
@@ -79,8 +81,13 @@ const sanitizeResourceForViewer = (resource, viewerCompanyId) => {
       },
     };
     if (resObj.location) {
-      resObj.location.address = "Confidential Industrial Facility";
+      resObj.location.address = "Confidential Industrial Facility (Revealed after payment)";
       resObj.location.coordinates = undefined; // Strip exact GPS
+    }
+  } else if (resObj.identityVisibility === "Confidential" && (isSellerSelf || isPaid)) {
+    if (resObj.seller && typeof resObj.seller === 'object') {
+      resObj.seller.isConfidential = true;
+      resObj.seller.identityRevealed = true;
     }
   }
   return resObj;

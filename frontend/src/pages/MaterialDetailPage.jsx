@@ -152,9 +152,14 @@ export default function MaterialDetailPage() {
 
                 <div className="flex items-center gap-1.5">
                   {isConfidential ? (
-                    <span className="inline-flex items-center gap-1 font-semibold text-[#101010] bg-[#FDFCF8] px-2.5 py-0.5 rounded border border-[#E3DBCC]">
-                      <Lock className="w-3.5 h-3.5 text-[#101010]" /> Verified Confidential Supplier
-                    </span>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="inline-flex items-center gap-1 font-semibold text-[#065F46] bg-[#ECFDF5] px-2.5 py-0.5 rounded-full border border-[#A7F3D0]">
+                        <Lock className="w-3.5 h-3.5 text-[#059669]" /> Verified Confidential Supplier
+                      </span>
+                      <span className="text-[11px] font-mono text-[#101010]/60">
+                        (Identity revealed in order dashboard after payment)
+                      </span>
+                    </div>
                   ) : (
                     <span className="font-semibold text-[#101010]">
                       Supplier: {supplierDisplay}
@@ -218,6 +223,21 @@ export default function MaterialDetailPage() {
             </div>
           </div>
         </motion.div>
+
+        {/* Confidential Protection Protocol Notice */}
+        {isConfidential && (
+          <div className="mb-8 p-4 sm:p-5 rounded-2xl bg-[#F0FDF4] border border-[#A7F3D0] text-xs text-[#065F46] flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+            <div className="flex items-start sm:items-center gap-2.5">
+              <Lock className="w-4 h-4 text-[#059669] shrink-0 mt-0.5 sm:mt-0" />
+              <span>
+                <strong>Confidential Trading Protocol:</strong> The supplier of this industrial stream has enabled identity protection. Verified corporate credentials, legal name, and plant dispatch point will be unlocked directly in your dashboard upon payment completion.
+              </span>
+            </div>
+            <span className="font-mono text-[10px] uppercase font-bold text-[#065F46] bg-white px-2.5 py-1 rounded-md border border-[#A7F3D0] shrink-0 self-start sm:self-auto">
+              Identity Protected
+            </span>
+          </div>
+        )}
 
         {/* Two-Column Technical Layout */}
         <motion.div

@@ -199,9 +199,39 @@ const getDeals = async (req, res) => {
 
     const sanitized = deals.map((deal) => {
       const dealObj = deal.toObject();
+      const isPaid =
+        ["Payment Verified", "Payment Completed", "In Transit", "Delivery", "Completed", "Exchange Completed"].includes(dealObj.status) ||
+        dealObj.payment?.status === "VERIFIED";
+
       if (dealObj.resource) {
-        dealObj.resource = sanitizeResourceForViewer(dealObj.resource, viewerCompanyId);
+        dealObj.resource = sanitizeResourceForViewer(dealObj.resource, viewerCompanyId, isPaid);
       }
+
+      const isBuyerViewer = viewerCompanyId && String(dealObj.buyer?._id || dealObj.buyer) === String(viewerCompanyId);
+      const isConfidential = dealObj.confidentiality?.isConfidentialToBuyer || dealObj.resource?.identityVisibility === "Confidential";
+
+      if (isConfidential) {
+        if (isPaid) {
+          dealObj.identityRevealed = true;
+          if (dealObj.seller) {
+            dealObj.seller.identityRevealed = true;
+            dealObj.seller.isConfidential = false;
+          }
+        } else if (isBuyerViewer) {
+          dealObj.identityRevealed = false;
+          if (dealObj.seller) {
+            dealObj.seller = {
+              _id: dealObj.seller._id,
+              name: "🔐 Verified Confidential Supplier",
+              industry: dealObj.seller.industry || "Industrial Metallurgy / Refining",
+              isConfidential: true,
+              identityRevealed: false,
+              location: dealObj.seller.location,
+            };
+          }
+        }
+      }
+
       return dealObj;
     });
 
@@ -230,11 +260,40 @@ const getDealById = async (req, res) => {
 
     const viewerCompanyId = req.user?.company?._id;
     const dealObj = deal.toObject();
+    const isPaid =
+      ["Payment Verified", "Payment Completed", "In Transit", "Delivery", "Completed", "Exchange Completed"].includes(dealObj.status) ||
+      dealObj.payment?.status === "VERIFIED";
+
     if (dealObj.resource) {
-      dealObj.resource = sanitizeResourceForViewer(dealObj.resource, viewerCompanyId);
+      dealObj.resource = sanitizeResourceForViewer(dealObj.resource, viewerCompanyId, isPaid);
     }
 
-    res.json({ success: true, deal: dealObj });
+    const isBuyerViewer = viewerCompanyId && String(dealObj.buyer?._id || dealObj.buyer) === String(viewerCompanyId);
+    const isConfidential = dealObj.confidentiality?.isConfidentialToBuyer || dealObj.resource?.identityVisibility === "Confidential";
+
+    if (isConfidential) {
+      if (isPaid) {
+        dealObj.identityRevealed = true;
+        if (dealObj.seller) {
+          dealObj.seller.identityRevealed = true;
+          dealObj.seller.isConfidential = false;
+        }
+      } else if (isBuyerViewer) {
+        dealObj.identityRevealed = false;
+        if (dealObj.seller) {
+          dealObj.seller = {
+            _id: dealObj.seller._id,
+            name: "🔐 Verified Confidential Supplier",
+            industry: dealObj.seller.industry || "Industrial Metallurgy / Refining",
+            isConfidential: true,
+            identityRevealed: false,
+            location: dealObj.seller.location,
+          };
+        }
+      }
+    }
+
+    res.json({ success: true, deal: dealObj, isPaid });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }

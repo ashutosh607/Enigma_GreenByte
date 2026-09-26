@@ -9,6 +9,7 @@ import {
   ArrowRight,
   Heart,
   FileText,
+  Lock,
 } from 'lucide-react';
 
 // Curated high-resolution industrial photography matching actual material streams
@@ -146,9 +147,14 @@ export default function ResourceCard({ resource }) {
           {/* Verified Supplier Badge with Improved Premium Emerald Green */}
           <div>
             {isConfidential ? (
-              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#ECFDF5] text-[#065F46] border border-[#A7F3D0] text-[11px] font-bold tracking-tight">
-                <CheckCircle2 className="w-3.5 h-3.5 text-[#059669]" />
-                <span>Verified Confidential Supplier</span>
+              <div className="space-y-0.5">
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#ECFDF5] text-[#065F46] border border-[#A7F3D0] text-[11px] font-bold tracking-tight">
+                  <Lock className="w-3.5 h-3.5 text-[#059669]" />
+                  <span>Verified Confidential Supplier</span>
+                </div>
+                <span className="block text-[10px] font-mono text-[#101010]/50 pl-1">
+                  Identity revealed upon payment
+                </span>
               </div>
             ) : (
               <div className="flex items-center gap-1.5 text-xs text-[#101010] font-semibold">
