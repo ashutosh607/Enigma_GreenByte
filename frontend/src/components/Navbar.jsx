@@ -8,7 +8,6 @@ import {
   LogIn,
   UserPlus,
   LogOut,
-  Sparkles,
   ChevronDown,
   User,
   Package,
@@ -137,13 +136,12 @@ export default function Navbar() {
 
             <Link
               to="/ai-discovery"
-              className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold uppercase tracking-wider transition-colors flex items-center gap-1.5 ${
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold uppercase tracking-wider transition-colors ${
                 isActive('/ai-discovery')
                   ? 'bg-[#101010] text-[#FDFCF8]'
                   : 'text-[#101010]/75 hover:text-[#101010] hover:bg-black/5'
               }`}
             >
-              <Sparkles className="w-3.5 h-3.5 text-[#286B4A]" />
               AI Discovery
             </Link>
           </nav>
@@ -206,7 +204,7 @@ export default function Navbar() {
                     <div className="absolute right-0 mt-2 w-64 rounded-2xl bg-white border border-[#E3DBCC] shadow-2xl py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
                       {/* User Header Details */}
                       <div className="px-4 py-3 border-b border-[#E3DBCC]/60 bg-[#FDFCF8] rounded-t-2xl">
-                        <div className="text-xs font-mono font-bold text-[#286B4A] uppercase tracking-wider mb-0.5">
+                        <div className="text-xs font-mono font-bold text-[#065F46] uppercase tracking-wider mb-0.5">
                           Active Account
                         </div>
                         <div className="text-sm font-bold text-[#101010] truncate">
@@ -228,7 +226,7 @@ export default function Navbar() {
                           onClick={() => setProfileDropdownOpen(false)}
                           className="flex items-center gap-2.5 px-4 py-2.5 text-xs font-bold text-[#101010] hover:bg-[#F3F0E9] transition-colors"
                         >
-                          <LayoutDashboard className="w-4 h-4 text-[#286B4A]" />
+                          <LayoutDashboard className="w-4 h-4 text-[#065F46]" />
                           <span>Dashboard</span>
                         </Link>
 
@@ -347,7 +345,7 @@ export default function Navbar() {
                     onClick={() => setMobileMenuOpen(false)}
                     className="flex items-center gap-2 px-3 py-2 text-sm font-bold text-[#101010] rounded-lg hover:bg-black/5"
                   >
-                    <LayoutDashboard className="w-4 h-4 text-[#286B4A]" />
+                    <LayoutDashboard className="w-4 h-4 text-[#065F46]" />
                     Dashboard
                   </Link>
 

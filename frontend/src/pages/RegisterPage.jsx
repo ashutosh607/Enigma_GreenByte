@@ -9,7 +9,6 @@ import {
   MapPin, 
   Factory, 
   ArrowRight, 
-  Sparkles, 
   CheckCircle2, 
   ShieldCheck,
   AlertCircle 
@@ -139,7 +138,7 @@ export default function RegisterPage() {
           </Link>
 
           <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#F3F0E9] border border-[#E3DBCC] text-[11px] font-mono font-semibold uppercase tracking-wider text-[#101010] mb-3">
-            <Sparkles className="w-3.5 h-3.5 text-[#286B4A]" />
+            <ShieldCheck className="w-3.5 h-3.5 text-[#065F46]" />
             Enterprise Industrial Onboarding
           </div>
 

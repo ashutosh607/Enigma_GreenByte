@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { X, LogIn, Sparkles, ArrowRight, ShieldCheck } from 'lucide-react';
+import { X, LogIn, ArrowRight, ShieldCheck } from 'lucide-react';
 import { setUser } from '../store/slices/authSlice';
 import { authApi } from '../services/api';
 
@@ -94,7 +94,7 @@ export default function LoginModal({ isOpen, onClose, onSuccess }) {
         {/* Modal Brand Header */}
         <div className="text-center mb-6">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#F3F0E9] border border-[#E3DBCC] text-[11px] font-mono font-semibold uppercase tracking-wider text-[#101010] mb-3">
-            <Sparkles className="w-3.5 h-3.5 text-[#286B4A]" />
+            <ShieldCheck className="w-3.5 h-3.5 text-[#065F46]" />
             Enterprise Sign In
           </div>
           <h2 className="text-2xl font-black uppercase tracking-tight text-[#101010]">

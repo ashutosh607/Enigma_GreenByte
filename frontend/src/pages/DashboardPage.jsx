@@ -18,7 +18,6 @@ import {
   ChevronRight,
   Building2,
   MapPin,
-  Sparkles,
   ShieldCheck,
   RefreshCw,
   Eye,
@@ -446,7 +445,7 @@ export default function DashboardPage() {
                 className="flex items-center justify-between hover:text-[#101010] font-semibold transition-colors"
               >
                 <span>AI Material Matcher</span>
-                <Sparkles className="w-3.5 h-3.5 text-[#286B4A]" />
+                <Compass className="w-3.5 h-3.5 text-[#286B4A]" />
               </Link>
             </div>
           </aside>

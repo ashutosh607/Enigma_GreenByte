@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
-  Sparkles,
+  Compass,
   ArrowRight,
   Plus,
   Trash2,
@@ -102,7 +102,7 @@ export default function AiDiscoveryPage() {
         {/* Header from Specification Section 14 */}
         <div className="max-w-3xl mb-10">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#E3DBCC] text-[11px] font-mono font-bold uppercase tracking-wider text-[#101010] mb-3">
-            <Sparkles className="w-3.5 h-3.5" />
+            <Compass className="w-3.5 h-3.5" />
             AI Symbiosis Discovery Engine
           </div>
           <h1 className="text-3xl sm:text-5xl font-black uppercase tracking-tight text-[#101010]">
@@ -291,7 +291,7 @@ export default function AiDiscoveryPage() {
                 disabled={analyzing}
                 className="w-full py-4 rounded-xl bg-[#101010] text-[#FDFCF8] font-bold text-sm hover:bg-black transition-all flex items-center justify-center gap-2 shadow-md cursor-pointer disabled:opacity-50"
               >
-                <Sparkles className="w-4 h-4" />
+                <Compass className="w-4 h-4" />
                 {analyzing ? 'Evaluating Circular Network...' : 'Find Alternatives'}
               </button>
             </div>

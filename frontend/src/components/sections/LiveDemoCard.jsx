@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowRight, Sparkles, MapPin, Gauge, ShieldCheck, TrendingUp, Layers } from 'lucide-react';
+import { ArrowRight, MapPin, Gauge, ShieldCheck, TrendingUp, Layers } from 'lucide-react';
 
 const industryPairs = [
   {
@@ -79,7 +79,7 @@ export default function LiveDemoCard() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-2xl mx-auto mb-12">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#E3DBCC] text-[11px] font-mono font-bold uppercase tracking-wider text-[#101010] mb-3">
-            <Sparkles className="w-3.5 h-3.5 text-[#101010]" />
+            <Layers className="w-3.5 h-3.5 text-[#101010]" />
             Interactive Symbiosis Simulator
           </div>
           <h2 className="text-3xl sm:text-4xl font-black uppercase text-[#101010] tracking-tight">

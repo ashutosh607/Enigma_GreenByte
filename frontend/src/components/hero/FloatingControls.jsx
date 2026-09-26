@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChevronLeft, Sparkles, Volume2, VolumeX } from 'lucide-react';
+import { ChevronLeft, Volume2, VolumeX } from 'lucide-react';
 
 export default function FloatingControls({ 
   isMuted, 
@@ -31,7 +31,7 @@ export default function FloatingControls({
           title={isMuted ? "Audio: Muted (Click to enable)" : "Audio: Playing"}
         >
           {isMuted ? (
-            <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 transition-transform group-hover:rotate-12 text-white/90" />
+            <VolumeX className="w-5 h-5 sm:w-6 sm:h-6 transition-transform group-hover:rotate-12 text-white/90" />
           ) : (
             <Volume2 className="w-5 h-5 sm:w-6 sm:h-6 text-[#B8D957] animate-pulse" />
           )}

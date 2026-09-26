@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { X, LogIn, UserPlus, Sparkles, Building2, CheckCircle2, ArrowRight } from 'lucide-react';
+import { X, LogIn, UserPlus, ShieldCheck, Building2, CheckCircle2, ArrowRight } from 'lucide-react';
 import { setUser } from '../store/slices/authSlice';
 import { authApi } from '../services/api';
 
@@ -95,7 +95,7 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login', onSu
         {/* Brand Header */}
         <div className="text-center mb-6">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#F3F0E9] border border-[#E3DBCC] text-[11px] font-mono font-semibold uppercase tracking-wider text-[#101010] mb-3">
-            <Sparkles className="w-3.5 h-3.5 text-[#286B4A]" />
+            <ShieldCheck className="w-3.5 h-3.5 text-[#065F46]" />
             Enterprise Authentication
           </div>
           <h2 className="text-2xl font-black uppercase tracking-tight text-[#101010]">

@@ -1,220 +1,293 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Filter, RefreshCw, SlidersHorizontal, Lock, Check } from 'lucide-react';
+import {
+  Search,
+  SlidersHorizontal,
+  Tag,
+  Building2,
+  Layers,
+  Settings,
+  FlaskConical,
+  Scissors,
+  MoreHorizontal,
+  RefreshCw,
+  X,
+} from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchResources, setFilters, resetFilters } from '../store/slices/resourceSlice';
 import ResourceCard from '../components/ResourceCard';
 
+const CATEGORY_TABS = [
+  { id: 'All', label: 'All', icon: null },
+  { id: 'Construction Materials', label: 'Construction Materials', icon: Building2 },
+  { id: 'Metals & Alloys', label: 'Metals & Alloys', icon: Layers },
+  { id: 'Machinery & Equipment', label: 'Machinery & Equipment', icon: Settings },
+  { id: 'Chemicals', label: 'Chemicals', icon: FlaskConical },
+  { id: 'Textiles', label: 'Textiles', icon: Scissors },
+  { id: 'Others', label: 'Others', icon: MoreHorizontal },
+];
+
 export default function MarketplacePage() {
   const dispatch = useDispatch();
-  const { items, loading, error, filters } = useSelector((state) => state.resources);
+  const { items, loading, filters } = useSelector((state) => state.resources);
+
+  const [activeCategory, setActiveCategory] = useState('All');
+  const [searchInput, setSearchInput] = useState('');
   const [showFilters, setShowFilters] = useState(false);
 
   useEffect(() => {
     dispatch(fetchResources(filters));
   }, [dispatch, filters]);
 
-  const handleFilterChange = (key, value) => {
-    dispatch(setFilters({ [key]: value }));
-  };
-
   const handleSearchSubmit = (e) => {
     e.preventDefault();
-    dispatch(fetchResources(filters));
+    dispatch(setFilters({ search: searchInput }));
   };
 
+  const handleCategoryClick = (catId) => {
+    setActiveCategory(catId);
+    if (catId === 'All') {
+      dispatch(setFilters({ category: 'All' }));
+    } else {
+      dispatch(setFilters({ category: catId }));
+    }
+  };
+
+  // Client-side smart matching in case backend categories differ slightly
+  const filteredItems = items.filter((item) => {
+    if (activeCategory === 'All') return true;
+
+    const title = (item.title || '').toLowerCase();
+    const cat = (item.category || '').toLowerCase();
+    const desc = (item.description || '').toLowerCase();
+
+    if (activeCategory === 'Construction Materials') {
+      return (
+        cat.includes('construction') ||
+        cat.includes('gypsum') ||
+        title.includes('gypsum') ||
+        title.includes('sand') ||
+        title.includes('slag') ||
+        title.includes('fly ash') ||
+        title.includes('ggbs') ||
+        desc.includes('aggregate') ||
+        desc.includes('concrete')
+      );
+    }
+    if (activeCategory === 'Metals & Alloys') {
+      return (
+        cat.includes('metal') ||
+        title.includes('steel') ||
+        title.includes('slag') ||
+        title.includes('iron') ||
+        desc.includes('metallurgy')
+      );
+    }
+    if (activeCategory === 'Chemicals') {
+      return (
+        cat.includes('chemical') ||
+        title.includes('caustic') ||
+        title.includes('phospho') ||
+        title.includes('acid') ||
+        desc.includes('chemical')
+      );
+    }
+    if (activeCategory === 'Machinery & Equipment') {
+      return (
+        cat.includes('machinery') ||
+        cat.includes('equipment') ||
+        title.includes('kiln') ||
+        title.includes('crusher') ||
+        desc.includes('equipment')
+      );
+    }
+    if (activeCategory === 'Textiles') {
+      return cat.includes('textile') || title.includes('textile') || desc.includes('fiber');
+    }
+    return true;
+  });
+
   return (
-    <div className="w-full min-h-screen bg-[#FDFCF8] text-[#101010] py-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Page Header */}
-        <div className="max-w-3xl mb-8">
-          <div className="text-xs font-mono uppercase tracking-widest text-[#101010]/55 font-bold mb-2">
-            Public Material Registry
+    <div className="w-full min-h-screen bg-[#FDFCF8] text-[#101010] py-8 sm:py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 sm:space-y-8">
+        {/* Marketplace Header: Title on Left, Pill Search + Filters on Right */}
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-2">
+          {/* Left Column: Badge, Title, Subtitle */}
+          <div>
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#F3F0E9] border border-[#E3DBCC] text-[11px] font-mono font-bold uppercase tracking-wider text-[#101010] mb-3 shadow-xs">
+              <Tag className="w-3.5 h-3.5 text-[#065F46]" />
+              <span>Marketplace</span>
+            </div>
+            <h1 className="text-3xl sm:text-4xl lg:text-[42px] font-black uppercase tracking-tight text-[#101010] leading-none">
+              Industrial Materials & Equipment
+            </h1>
+            <p className="mt-2 text-xs sm:text-sm text-[#101010]/65 font-normal">
+              Verified suppliers. Quality materials. Faster deals.
+            </p>
           </div>
-          <h1 className="text-3xl sm:text-5xl font-black uppercase tracking-tight text-[#101010]">
-            Industrial Marketplace
-          </h1>
-          <p className="mt-3 text-sm sm:text-base text-[#101010]/70 leading-relaxed font-normal">
-            Find industrial residuals, by-products and secondary materials from verified sources.
-          </p>
+
+          {/* Right Column: Rounded-Full Search Bar & Filters Button */}
+          <div className="flex items-center gap-3 w-full lg:max-w-xl">
+            <form onSubmit={handleSearchSubmit} className="relative flex-1">
+              <Search className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-[#101010]/40" />
+              <input
+                type="text"
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                placeholder="Search for materials, category or location..."
+                className="w-full pl-11 pr-4 py-3 rounded-full bg-white border border-[#E3DBCC] text-xs sm:text-sm text-[#101010] placeholder-[#101010]/45 shadow-xs focus:outline-none focus:border-[#101010] transition-colors"
+              />
+            </form>
+
+            <button
+              type="button"
+              onClick={() => setShowFilters(!showFilters)}
+              className="px-5 py-3 rounded-full bg-white hover:bg-[#F3F0E9] border border-[#E3DBCC] text-xs font-bold uppercase tracking-wider text-[#101010] flex items-center gap-2 shadow-xs transition-colors shrink-0 cursor-pointer"
+            >
+              <SlidersHorizontal className="w-3.5 h-3.5" />
+              <span>Filters</span>
+            </button>
+          </div>
         </div>
 
-        {/* Large Search Bar */}
-        <form onSubmit={handleSearchSubmit} className="mb-6">
-          <div className="relative flex items-center">
-            <Search className="w-5 h-5 absolute left-4 text-[#101010]/40" />
-            <input
-              type="text"
-              value={filters.search}
-              onChange={(e) => handleFilterChange('search', e.target.value)}
-              placeholder="Search material, category or intended use..."
-              className="w-full pl-12 pr-32 py-4 rounded-xl bg-[#F3F0E9] border border-[#E3DBCC] text-sm text-[#101010] placeholder-[#101010]/40 focus:outline-none focus:border-[#101010] focus:ring-1 focus:ring-[#101010]"
-            />
-            <div className="absolute right-2 flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => setShowFilters(!showFilters)}
-                className="px-3.5 py-2 rounded-lg bg-[#FDFCF8] border border-[#E3DBCC] text-xs font-semibold text-[#101010] flex items-center gap-1.5 hover:bg-[#E3DBCC] transition-colors cursor-pointer"
-              >
-                <SlidersHorizontal className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">Filters</span>
-              </button>
-              <button
-                type="submit"
-                className="px-4 py-2 rounded-lg bg-[#101010] text-[#FDFCF8] text-xs font-bold hover:bg-black transition-colors cursor-pointer"
-              >
-                Search
-              </button>
-            </div>
-          </div>
-        </form>
+        {/* Category Filter Pills Row (as in reference image) */}
+        <div className="flex items-center gap-2.5 overflow-x-auto pb-2 scrollbar-none">
+          {CATEGORY_TABS.map((tab) => {
+            const Icon = tab.icon;
+            const isSelected = activeCategory === tab.id;
 
-        {/* Expandable Industrial Filters Panel */}
+            return (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => handleCategoryClick(tab.id)}
+                className={`flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-200 cursor-pointer shadow-xs ${
+                  isSelected
+                    ? 'bg-[#101010] text-[#FDFCF8] font-bold shadow-sm'
+                    : 'bg-white hover:bg-[#F3F0E9] border border-[#E3DBCC] text-[#101010]/80 hover:text-[#101010]'
+                }`}
+              >
+                {Icon && <Icon className="w-3.5 h-3.5 text-[#101010]/70" />}
+                <span>{tab.label}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Expandable Parameter Filters Drawer */}
         {showFilters && (
-          <div className="card-ivory p-6 border border-[#E3DBCC] rounded-xl mb-8 space-y-4 animate-in fade-in duration-200">
+          <div className="card-ivory p-6 border border-[#E3DBCC] rounded-2xl space-y-4 animate-in fade-in duration-150 shadow-sm">
             <div className="flex items-center justify-between pb-3 border-b border-[#E3DBCC]">
               <span className="text-xs uppercase font-mono font-bold text-[#101010]">
-                Industrial Search Parameters
+                Advanced Search Filters
               </span>
               <button
                 type="button"
-                onClick={() => dispatch(resetFilters())}
-                className="text-xs font-semibold text-[#101010]/70 hover:text-[#101010] underline"
+                onClick={() => {
+                  dispatch(resetFilters());
+                  setActiveCategory('All');
+                  setSearchInput('');
+                }}
+                className="text-xs font-semibold text-[#101010]/70 hover:text-[#101010] underline cursor-pointer"
               >
-                Reset Filters
+                Reset All Filters
               </button>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 text-xs">
-              {/* Category */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
               <div>
-                <label className="block text-[11px] font-mono uppercase text-[#101010]/60 mb-1">
-                  Category
-                </label>
-                <select
-                  value={filters.category}
-                  onChange={(e) => handleFilterChange('category', e.target.value)}
-                  className="w-full px-2.5 py-1.5 rounded-lg bg-[#FDFCF8] border border-[#E3DBCC] text-[#101010]"
-                >
-                  <option value="All">All Categories</option>
-                  <option value="By-product">By-product</option>
-                  <option value="Residual">Residual</option>
-                  <option value="Waste">Waste</option>
-                  <option value="Secondary Material">Secondary Material</option>
-                </select>
-              </div>
-
-              {/* Region */}
-              <div>
-                <label className="block text-[11px] font-mono uppercase text-[#101010]/60 mb-1">
+                <label className="block text-[11px] font-mono uppercase text-[#101010]/60 mb-1 font-bold">
                   Region
                 </label>
                 <select
                   value={filters.region}
-                  onChange={(e) => handleFilterChange('region', e.target.value)}
-                  className="w-full px-2.5 py-1.5 rounded-lg bg-[#FDFCF8] border border-[#E3DBCC] text-[#101010]"
+                  onChange={(e) => dispatch(setFilters({ region: e.target.value }))}
+                  className="w-full px-3 py-2 rounded-xl bg-white border border-[#E3DBCC] text-[#101010] text-xs"
                 >
                   <option value="All">All Regions</option>
                   <option value="Western India">Western India</option>
+                  <option value="Eastern India">Eastern India</option>
                   <option value="Northern India">Northern India</option>
                   <option value="Southern India">Southern India</option>
-                  <option value="Eastern India">Eastern India</option>
                 </select>
               </div>
 
-              {/* Availability */}
               <div>
-                <label className="block text-[11px] font-mono uppercase text-[#101010]/60 mb-1">
-                  Availability
+                <label className="block text-[11px] font-mono uppercase text-[#101010]/60 mb-1 font-bold">
+                  State of Matter
                 </label>
                 <select
-                  value={filters.availability}
-                  onChange={(e) => handleFilterChange('availability', e.target.value)}
-                  className="w-full px-2.5 py-1.5 rounded-lg bg-[#FDFCF8] border border-[#E3DBCC] text-[#101010]"
+                  value={filters.stateOfMatter || 'All'}
+                  onChange={(e) => dispatch(setFilters({ stateOfMatter: e.target.value }))}
+                  className="w-full px-3 py-2 rounded-xl bg-white border border-[#E3DBCC] text-[#101010] text-xs"
                 >
-                  <option value="All">All Availability</option>
-                  <option value="Available Recurring">Available Recurring</option>
-                  <option value="Recurring">Recurring</option>
-                  <option value="One-time Batch">One-time Batch</option>
-                  <option value="Spot Available">Spot Available</option>
+                  <option value="All">All States</option>
+                  <option value="Solid">Solid</option>
+                  <option value="Slurry">Slurry</option>
+                  <option value="Liquid">Liquid</option>
+                  <option value="Gas">Gas</option>
                 </select>
               </div>
 
-              {/* Processing Required */}
               <div>
-                <label className="block text-[11px] font-mono uppercase text-[#101010]/60 mb-1">
-                  Processing
+                <label className="block text-[11px] font-mono uppercase text-[#101010]/60 mb-1 font-bold">
+                  Processing Required
                 </label>
                 <select
                   value={filters.processingRequired}
-                  onChange={(e) => handleFilterChange('processingRequired', e.target.value)}
-                  className="w-full px-2.5 py-1.5 rounded-lg bg-[#FDFCF8] border border-[#E3DBCC] text-[#101010]"
+                  onChange={(e) => dispatch(setFilters({ processingRequired: e.target.value }))}
+                  className="w-full px-3 py-2 rounded-xl bg-white border border-[#E3DBCC] text-[#101010] text-xs"
                 >
-                  <option value="All">Any Status</option>
-                  <option value="false">Direct Usable</option>
+                  <option value="All">Any</option>
+                  <option value="false">Direct Usable Only</option>
                   <option value="true">Processing Required</option>
                 </select>
               </div>
 
-              {/* Confidentiality */}
               <div>
-                <label className="block text-[11px] font-mono uppercase text-[#101010]/60 mb-1">
-                  Supplier Identity
+                <label className="block text-[11px] font-mono uppercase text-[#101010]/60 mb-1 font-bold">
+                  Price Limit (Max ₹/ton)
                 </label>
-                <select
-                  value={filters.identityVisibility}
-                  onChange={(e) => handleFilterChange('identityVisibility', e.target.value)}
-                  className="w-full px-2.5 py-1.5 rounded-lg bg-[#FDFCF8] border border-[#E3DBCC] text-[#101010]"
-                >
-                  <option value="All">All Suppliers</option>
-                  <option value="Confidential">🔐 Confidential Only</option>
-                  <option value="Open">Open Producer Only</option>
-                </select>
+                <input
+                  type="number"
+                  placeholder="e.g. 100"
+                  value={filters.maxPrice || ''}
+                  onChange={(e) => dispatch(setFilters({ maxPrice: e.target.value }))}
+                  className="w-full px-3 py-2 rounded-xl bg-white border border-[#E3DBCC] text-[#101010] text-xs"
+                />
               </div>
             </div>
           </div>
         )}
 
-        {/* Confidentiality Guarantee Notice */}
-        <div className="mb-8 p-3 rounded-lg bg-[#F3F0E9] border border-[#E3DBCC] flex items-center justify-between text-xs text-[#101010]/75">
-          <div className="flex items-center gap-2">
-            <Lock className="w-4 h-4 text-[#101010]" />
-            <span>
-              <strong>Backend Anonymity Protocol:</strong> Confidential supplier names and exact GPS
-              coordinates are protected by authorization access controls.
-            </span>
-          </div>
-          <span className="hidden sm:inline font-mono text-[10px] uppercase font-bold text-[#101010]">
-            Verified Trade Enforced
-          </span>
-        </div>
-
-        {/* Resources Grid */}
+        {/* Material Cards Grid (3 Columns Layout matching user reference image) */}
         {loading ? (
-          <div className="py-20 text-center">
-            <div className="inline-block w-8 h-8 border-2 border-[#101010] border-t-transparent rounded-full animate-spin mb-3" />
-            <div className="text-xs uppercase font-mono text-[#101010]/60">
-              Querying Industrial Registry...
-            </div>
+          <div className="py-24 text-center">
+            <RefreshCw className="w-8 h-8 animate-spin text-[#101010]/40 mx-auto mb-3" />
+            <p className="text-xs font-mono uppercase text-[#101010]/60">
+              Querying verified industrial streams...
+            </p>
           </div>
-        ) : error ? (
-          <div className="p-8 text-center card-ivory border border-[#101010]">
-            <p className="text-sm font-semibold text-[#101010]">{error}</p>
-          </div>
-        ) : items.length === 0 ? (
-          <div className="p-16 text-center card-ivory border border-[#E3DBCC] rounded-xl">
-            <p className="text-base font-bold text-[#101010]">No materials match your filter criteria.</p>
-            <p className="text-xs text-[#101010]/60 mt-1">Try resetting search terms or parameters.</p>
+        ) : filteredItems.length === 0 ? (
+          <div className="card-ivory p-12 text-center border border-[#E3DBCC] rounded-2xl max-w-md mx-auto space-y-3">
+            <p className="text-sm font-bold text-[#101010]">No materials match this filter.</p>
+            <p className="text-xs text-[#101010]/60">
+              Try selecting "All" or resetting your search parameters.
+            </p>
             <button
               type="button"
-              onClick={() => dispatch(resetFilters())}
-              className="mt-4 px-4 py-2 rounded-lg bg-[#101010] text-[#FDFCF8] text-xs font-semibold"
+              onClick={() => {
+                dispatch(resetFilters());
+                setActiveCategory('All');
+                setSearchInput('');
+              }}
+              className="px-4 py-2 rounded-xl bg-[#101010] text-white text-xs font-bold"
             >
               Reset Filters
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {items.map((resource) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7">
+            {filteredItems.map((resource) => (
               <ResourceCard key={resource._id} resource={resource} />
             ))}
           </div>

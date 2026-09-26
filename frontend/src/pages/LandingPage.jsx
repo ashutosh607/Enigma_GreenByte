@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   ArrowRight,
-  Sparkles,
+  Compass,
   Layers,
   ShieldCheck,
   CheckCircle2,
@@ -119,7 +119,7 @@ export default function LandingPage() {
               to="/ai-discovery"
               className="px-7 py-3.5 rounded-xl bg-white/85 hover:bg-white text-[#101010] border border-[#E3DBCC] text-xs sm:text-sm font-bold tracking-wide backdrop-blur-md transition-all shadow-xs flex items-center justify-center gap-2 cursor-pointer"
             >
-              <Sparkles className="w-4 h-4 text-[#286B4A]" />
+              <Compass className="w-4 h-4 text-[#286B4A]" />
               Discover Alternatives
             </Link>
           </div>
@@ -243,7 +243,7 @@ export default function LandingPage() {
           >
             <div>
               <div className="w-12 h-12 rounded-xl bg-[#F3F0E9] flex items-center justify-center text-[#101010] mb-6">
-                <Sparkles className="w-6 h-6 text-[#286B4A]" />
+                <Compass className="w-6 h-6 text-[#286B4A]" />
               </div>
               <h3 className="text-lg font-bold uppercase tracking-tight text-[#101010] mb-2">
                 AI Material Discovery
@@ -369,7 +369,7 @@ export default function LandingPage() {
               to="/ai-discovery"
               className="px-7 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-[#FDFCF8] text-xs sm:text-sm font-bold uppercase tracking-wider transition-all cursor-pointer flex items-center gap-2"
             >
-              <Sparkles className="w-4 h-4 text-[#B8D957]" />
+              <Compass className="w-4 h-4 text-[#B8D957]" />
               <span>AI Material Matcher</span>
             </Link>
           </div>

@@ -3,7 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import {
   ArrowLeft,
   ArrowRight,
-  Sparkles,
+  Compass,
   Lock,
   CheckCircle2,
   TrendingDown,
@@ -105,7 +105,7 @@ export default function OpportunityDetailPage() {
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div>
               <div className="text-xs font-mono uppercase tracking-widest text-[#101010]/55 font-bold mb-2 flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-[#101010]" /> Potential Symbiosis Opportunity
+                <Compass className="w-3.5 h-3.5 text-[#286B4A]" /> Potential Symbiosis Opportunity
               </div>
               <h1 className="text-3xl sm:text-5xl font-black uppercase tracking-tight text-[#101010]">
                 {opportunity.title}

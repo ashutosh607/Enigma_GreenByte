@@ -8,7 +8,6 @@ import {
   MapPin,
   Calendar,
   Layers,
-  Sparkles,
   ArrowRight,
   ShieldCheck,
   DollarSign,
