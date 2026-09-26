@@ -264,9 +264,88 @@ const advanceDealStatus = async (req, res) => {
   }
 };
 
+// @desc    Advance deal dispatch and telematics tracking
+// @route   PATCH /api/deals/:id/advance-dispatch
+const advanceDealDispatch = async (req, res) => {
+  try {
+    const deal = await Deal.findById(req.params.id)
+      .populate("resource")
+      .populate("buyer")
+      .populate("seller")
+      .populate("exchange");
+
+    if (!deal) {
+      return res.status(404).json({ success: false, message: "Deal not found" });
+    }
+
+    const stageCycle = {
+      "Deal Initiated": "Payment Completed",
+      "Assessment": "Payment Completed",
+      "Agreement": "Payment Completed",
+      "Payment Pending": "Payment Completed",
+      "Payment Completed": "Dispatch",
+      "Dispatch": "In Transit",
+      "In Transit": "Delivery",
+      "Delivery": "Exchange Completed",
+      "Exchange Completed": "In Transit",
+    };
+
+    const nextStatus = req.body?.status || stageCycle[deal.status] || "In Transit";
+    deal.status = nextStatus;
+    await deal.save();
+
+    if (deal.exchange) {
+      const exchange = await Exchange.findById(deal.exchange._id || deal.exchange);
+      if (exchange) {
+        if (nextStatus === "Delivery") {
+          exchange.deliveryDetails = {
+            isDelivered: false,
+            receivingFacility: "Buyer Inbound Weighbridge Gate 2",
+            receiverName: "Security Lead & Tare Inspector",
+            deliveryNotes: "Truck arrived at buyer facility. Awaiting gross weighbridge clearance.",
+          };
+        } else if (nextStatus === "Exchange Completed") {
+          exchange.deliveryDetails = {
+            isDelivered: true,
+            receivedDate: new Date(),
+            receivingFacility: "Buyer Inbound Weighbridge Gate 2",
+            deliveryCondition: "Optimal",
+            receiverName: "Site Receiving Manager",
+            deliveryNotes: "Gross weight verified against bill of lading. Material approved.",
+          };
+          exchange.qualityConfirmation = {
+            isConfirmed: true,
+            status: "Quality Approved",
+            confirmedBy: "Lead Quality Chemist",
+            confirmedAt: new Date(),
+            notes: "Lab sample meets required composition standards.",
+          };
+        }
+        await exchange.save();
+      }
+    }
+
+    const updated = await Deal.findById(deal._id)
+      .populate("resource")
+      .populate("buyer")
+      .populate("seller")
+      .populate("payment")
+      .populate("exchange");
+
+    res.json({
+      success: true,
+      deal: updated,
+      message: `Consignment tracking stage advanced to "${nextStatus}".`,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 module.exports = {
   initiateDeal,
   getDeals,
   getDealById,
   advanceDealStatus,
+  advanceDealDispatch,
 };
