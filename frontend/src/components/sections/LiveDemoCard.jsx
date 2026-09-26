@@ -1,43 +1,47 @@
 import React, { useState, useEffect } from 'react';
-import { Factory, ArrowRight, Sparkles, CheckCircle2, TrendingDown, MapPin, Gauge } from 'lucide-react';
+import { ArrowRight, Sparkles, MapPin, Gauge, ShieldCheck, TrendingUp, Layers } from 'lucide-react';
 
 const industryPairs = [
   {
     id: 'steel-cement',
-    donor: { name: 'Steel Mill', output: 'Blast Furnace Slag', location: 'Gary, IN' },
-    receiver: { name: 'Cement Producer', input: 'Clinker Substitute', location: 'Chicago, IL' },
+    donor: { name: 'Tata Metaliks Blast Furnace', output: 'Air-Cooled Blast Furnace Slag', location: 'Kharagpur, WB' },
+    receiver: { name: 'UltraTech Cement Works', input: 'Pozzolanic Clinker Substitute', location: 'Durgapur, WB' },
     score: 94,
-    distance: '38 miles',
-    co2Saved: '420 kg/ton',
-    economicValue: '$18 / ton margin'
+    distance: '138 km',
+    co2Saved: '420 kg / ton',
+    economicValue: '₹1,450 / ton margin',
+    regulatoryStatus: 'IS 12089 Compliant',
   },
   {
-    id: 'food-energy',
-    donor: { name: 'Brewery & Distiller', output: 'Spent Grain & Mash', location: 'Portland, OR' },
-    receiver: { name: 'Bio-gas & Organics', input: 'Anaerobic Feedstock', location: 'Salem, OR' },
-    score: 91,
-    distance: '45 miles',
-    co2Saved: '680 kg/ton',
-    economicValue: '$24 / ton margin'
-  },
-  {
-    id: 'textile-auto',
-    donor: { name: 'Textile Mill', output: 'Poly-Cotton Offcuts', location: 'Greensboro, NC' },
-    receiver: { name: 'Acoustic Composites', input: 'Auto Insulation Felt', location: 'Spartanburg, SC' },
-    score: 88,
-    distance: '72 miles',
-    co2Saved: '310 kg/ton',
-    economicValue: '$42 / ton margin'
-  },
-  {
-    id: 'thermal-infra',
-    donor: { name: 'Thermal Power', output: 'Class F Fly Ash', location: 'Morgantown, WV' },
-    receiver: { name: 'Precast Concrete', input: 'Pozzolanic Binder', location: 'Pittsburgh, PA' },
+    id: 'power-concrete',
+    donor: { name: 'NTPC Thermal Power Station', output: 'Class F Dry Micro-Fly Ash', location: 'Korba, CG' },
+    receiver: { name: 'L&T Infrastructure Precast', input: 'Supplementary Cementitious Binder', location: 'Raipur, CG' },
     score: 96,
-    distance: '29 miles',
-    co2Saved: '550 kg/ton',
-    economicValue: '$22 / ton margin'
-  }
+    distance: '92 km',
+    co2Saved: '550 kg / ton',
+    economicValue: '₹980 / ton margin',
+    regulatoryStatus: 'ASTM C618 Certified',
+  },
+  {
+    id: 'chemical-fertilizer',
+    donor: { name: 'Gujarat Heavy Chemicals', output: 'By-Product Phosphogypsum', location: 'Dahej, GJ' },
+    receiver: { name: 'IFFCO Agro-Nutrient Facility', input: 'Soil Conditioning Sulfate Base', location: 'Kalol, GJ' },
+    score: 89,
+    distance: '165 km',
+    co2Saved: '310 kg / ton',
+    economicValue: '₹1,850 / ton margin',
+    regulatoryStatus: 'CPCB Guidelines Verified',
+  },
+  {
+    id: 'foundry-asphalt',
+    donor: { name: 'Kirloskar Foundry Unit', output: 'Spent Silica Foundry Sand', location: 'Kolhapur, MH' },
+    receiver: { name: 'IRB Highway Pavement Unit', input: 'Bituminous Sub-Base Fine Aggregate', location: 'Satara, MH' },
+    score: 91,
+    distance: '115 km',
+    co2Saved: '280 kg / ton',
+    economicValue: '₹750 / ton margin',
+    regulatoryStatus: 'MoRTH Section 500 Approved',
+  },
 ];
 
 export default function LiveDemoCard() {
@@ -45,15 +49,15 @@ export default function LiveDemoCard() {
   const [displayedScore, setDisplayedScore] = useState(0);
   const [isAssembling, setIsAssembling] = useState(false);
 
-  const activePair = industryPairs.find(p => p.id === selectedId) || industryPairs[0];
+  const activePair = industryPairs.find((p) => p.id === selectedId) || industryPairs[0];
 
   useEffect(() => {
     setIsAssembling(true);
     setDisplayedScore(0);
     let start = 0;
     const end = activePair.score;
-    const duration = 750;
-    const intervalTime = 25;
+    const duration = 600;
+    const intervalTime = 20;
     const step = end / (duration / intervalTime);
 
     const timer = setInterval(() => {
@@ -71,150 +75,170 @@ export default function LiveDemoCard() {
   }, [selectedId, activePair.score]);
 
   return (
-    <section className="py-20 sm:py-28 px-6 max-w-5xl mx-auto border-b border-[#DCE3DE]">
-      <div className="text-center max-w-xl mx-auto mb-12">
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#B8D957]/30 border border-[#B8D957]/60 text-xs font-semibold text-[#17231D] mb-3">
-          <Sparkles className="w-3.5 h-3.5 text-[#286B4A]" />
-          Interactive Matching Simulation
-        </div>
-        <h2 className="font-heading font-semibold text-2xl sm:text-3xl text-[#17231D] tracking-tight">
-          Live Exchange Engine
-        </h2>
-        <p className="mt-2 text-sm text-[#66736B]">
-          Select an industrial stream to simulate cross-sector matching criteria and lifecycle impact.
-        </p>
-      </div>
-
-      {/* Main Interactive Demo Container */}
-      <div className="bg-white rounded-3xl border border-[#DCE3DE] shadow-xl overflow-hidden p-6 sm:p-10">
-        
-        {/* Stream Selector Chips */}
-        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-10">
-          {industryPairs.map((pair) => (
-            <button
-              key={pair.id}
-              onClick={() => setSelectedId(pair.id)}
-              className={`px-4 py-2 rounded-full text-xs font-medium transition-all ${
-                selectedId === pair.id
-                  ? 'bg-[#17231D] text-white shadow-sm'
-                  : 'bg-[#F5F7F4] text-[#66736B] hover:text-[#17231D] hover:bg-[#E9EDE7]'
-              }`}
-            >
-              {pair.donor.name} → {pair.receiver.name}
-            </button>
-          ))}
+    <section className="w-full py-20 bg-[#F3F0E9] border-t border-b border-[#E3DBCC]">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center max-w-2xl mx-auto mb-12">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#E3DBCC] text-[11px] font-mono font-bold uppercase tracking-wider text-[#101010] mb-3">
+            <Sparkles className="w-3.5 h-3.5 text-[#101010]" />
+            Interactive Symbiosis Simulator
+          </div>
+          <h2 className="text-3xl sm:text-4xl font-black uppercase text-[#101010] tracking-tight">
+            How RE:SOURCE Pairs Industrial Streams
+          </h2>
+          <p className="mt-3 text-sm text-[#101010]/70 leading-relaxed font-normal">
+            Select a secondary output to see how the engine matches chemical compatibility, calculates logistics boundaries, and executes structured commerce.
+          </p>
         </div>
 
-        {/* Dynamic Connection Architecture Diagram */}
-        <div className="relative grid grid-cols-1 md:grid-cols-11 gap-4 items-center mb-10 py-4">
-          
-          {/* Source Industry */}
-          <div className="md:col-span-4 p-5 rounded-2xl bg-[#F5F7F4] border border-[#DCE3DE]">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-[11px] font-semibold text-[#66736B] uppercase tracking-wider">
-                Origin Stream
-              </span>
-              <span className="w-2.5 h-2.5 rounded-full bg-[#D99A3D]" />
-            </div>
-            <h4 className="font-heading font-bold text-lg text-[#17231D] mb-1">
-              {activePair.donor.name}
-            </h4>
-            <div className="text-sm font-medium text-[#286B4A] mb-2">
-              By-product: {activePair.donor.output}
-            </div>
-            <div className="flex items-center gap-1.5 text-xs text-[#66736B]">
-              <MapPin className="w-3.5 h-3.5" />
-              {activePair.donor.location}
-            </div>
+        {/* Main Interactive Demo Container */}
+        <div className="card-ivory p-6 sm:p-10 border border-[#E3DBCC] rounded-3xl bg-[#FDFCF8] shadow-sm">
+          {/* Stream Selector Chips */}
+          <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-10">
+            {industryPairs.map((pair) => (
+              <button
+                key={pair.id}
+                type="button"
+                onClick={() => setSelectedId(pair.id)}
+                className={`px-4 py-2 rounded-xl text-xs font-mono font-bold tracking-tight transition-all cursor-pointer ${
+                  selectedId === pair.id
+                    ? 'bg-[#101010] text-[#FDFCF8] shadow-sm'
+                    : 'bg-[#F3F0E9] text-[#101010]/70 hover:text-[#101010] hover:bg-[#E3DBCC] border border-[#E3DBCC]'
+                }`}
+              >
+                {pair.donor.name.split(' ')[0]} → {pair.receiver.name.split(' ')[0]}
+              </button>
+            ))}
           </div>
 
-          {/* Center Connection & Animated Score */}
-          <div className="md:col-span-3 flex flex-col items-center justify-center my-4 md:my-0">
-            {/* SVG Drawing Line */}
-            <div className="w-full relative flex items-center justify-center mb-2">
-              <svg className="w-full h-8" viewBox="0 0 200 32" fill="none">
-                <line 
-                  x1="10" y1="16" x2="190" y2="16" 
-                  stroke="#DCE3DE" 
-                  strokeWidth="2" 
-                  strokeDasharray="4 4"
-                />
-                <line 
-                  x1="10" y1="16" x2="190" y2="16" 
-                  stroke="#286B4A" 
-                  strokeWidth="2.5" 
-                  className={isAssembling ? "transition-all duration-700 ease-out" : ""}
-                  style={{
-                    strokeDasharray: 180,
-                    strokeDashoffset: isAssembling ? 180 : 0
-                  }}
-                />
-              </svg>
+          {/* Dynamic Connection Architecture Diagram */}
+          <div className="grid grid-cols-1 md:grid-cols-11 gap-4 items-center mb-10">
+            {/* Source Industry */}
+            <div className="md:col-span-4 p-6 rounded-2xl bg-[#F3F0E9] border border-[#E3DBCC]">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-[10px] font-mono uppercase tracking-wider font-bold text-[#101010]/60">
+                  Origin Plant (Producer)
+                </span>
+                <span className="w-2.5 h-2.5 rounded-full bg-[#101010]" />
+              </div>
+              <h4 className="text-base font-bold uppercase text-[#101010] mb-1">
+                {activePair.donor.name}
+              </h4>
+              <div className="text-xs font-semibold text-[#101010]/80 mb-3">
+                Residual: {activePair.donor.output}
+              </div>
+              <div className="flex items-center gap-1.5 text-xs font-mono text-[#101010]/60">
+                <MapPin className="w-3.5 h-3.5" />
+                {activePair.donor.location}
+              </div>
             </div>
 
-            {/* Assembling Score Badge */}
-            <div className="flex flex-col items-center">
-              <div className="px-4 py-2 rounded-2xl bg-[#17231D] text-white flex items-center gap-2 shadow-lg">
-                <Gauge className="w-4 h-4 text-[#B8D957]" />
-                <span className="font-heading font-bold text-xl sm:text-2xl text-[#B8D957]">
-                  {displayedScore}%
+            {/* Center Connection & Animated Score */}
+            <div className="md:col-span-3 flex flex-col items-center justify-center py-4 md:py-0">
+              <div className="w-full flex items-center justify-center mb-2">
+                <svg className="w-full h-8" viewBox="0 0 200 32" fill="none">
+                  <line
+                    x1="10"
+                    y1="16"
+                    x2="190"
+                    y2="16"
+                    stroke="#E3DBCC"
+                    strokeWidth="2"
+                    strokeDasharray="4 4"
+                  />
+                  <line
+                    x1="10"
+                    y1="16"
+                    x2="190"
+                    y2="16"
+                    stroke="#101010"
+                    strokeWidth="2.5"
+                    className={isAssembling ? 'transition-all duration-700 ease-out' : ''}
+                    style={{
+                      strokeDasharray: 180,
+                      strokeDashoffset: isAssembling ? 180 : 0,
+                    }}
+                  />
+                </svg>
+              </div>
+
+              {/* Assembling Score Badge */}
+              <div className="flex flex-col items-center">
+                <div className="px-5 py-2.5 rounded-2xl bg-[#101010] text-[#FDFCF8] flex items-center gap-2 shadow-md">
+                  <Gauge className="w-4 h-4 text-[#FDFCF8]" />
+                  <span className="font-mono font-black text-2xl text-[#FDFCF8]">
+                    {displayedScore}%
+                  </span>
+                </div>
+                <span className="text-[11px] font-mono uppercase font-bold text-[#101010]/60 mt-1.5">
+                  Symbiosis Match Score
                 </span>
               </div>
-              <span className="text-[11px] font-medium text-[#66736B] mt-1.5">
-                Compatibility Index
+            </div>
+
+            {/* Receiver Industry */}
+            <div className="md:col-span-4 p-6 rounded-2xl bg-[#F3F0E9] border border-[#E3DBCC]">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-[10px] font-mono uppercase tracking-wider font-bold text-[#101010]/60">
+                  Target Consumer (Off-Taker)
+                </span>
+                <span className="w-2.5 h-2.5 rounded-full bg-[#101010]" />
+              </div>
+              <h4 className="text-base font-bold uppercase text-[#101010] mb-1">
+                {activePair.receiver.name}
+              </h4>
+              <div className="text-xs font-semibold text-[#101010]/80 mb-3">
+                Intake: {activePair.receiver.input}
+              </div>
+              <div className="flex items-center gap-1.5 text-xs font-mono text-[#101010]/60">
+                <MapPin className="w-3.5 h-3.5" />
+                {activePair.receiver.location}
+              </div>
+            </div>
+          </div>
+
+          {/* Metric Badges Row */}
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 pt-6 border-t border-[#E3DBCC]">
+            <div className="p-4 rounded-xl bg-[#F3F0E9] border border-[#E3DBCC]">
+              <span className="text-[11px] font-mono uppercase text-[#101010]/60 font-semibold">
+                Logistics Distance
               </span>
+              <div className="font-mono font-bold text-lg text-[#101010] mt-1">
+                {activePair.distance}
+              </div>
+              <span className="text-[11px] text-[#101010]/70">Feasible haulage zone</span>
             </div>
-          </div>
 
-          {/* Receiver Industry */}
-          <div className="md:col-span-4 p-5 rounded-2xl bg-[#F5F7F4] border border-[#DCE3DE]">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-[11px] font-semibold text-[#66736B] uppercase tracking-wider">
-                Target Facility
+            <div className="p-4 rounded-xl bg-[#F3F0E9] border border-[#E3DBCC]">
+              <span className="text-[11px] font-mono uppercase text-[#101010]/60 font-semibold">
+                Emissions Avoided
               </span>
-              <span className="w-2.5 h-2.5 rounded-full bg-[#286B4A]" />
+              <div className="font-mono font-bold text-lg text-[#101010] mt-1">
+                {activePair.co2Saved}
+              </div>
+              <span className="text-[11px] text-[#101010]/70">Scope 3 reduction</span>
             </div>
-            <h4 className="font-heading font-bold text-lg text-[#17231D] mb-1">
-              {activePair.receiver.name}
-            </h4>
-            <div className="text-sm font-medium text-[#3E8990] mb-2">
-              Intake: {activePair.receiver.input}
-            </div>
-            <div className="flex items-center gap-1.5 text-xs text-[#66736B]">
-              <MapPin className="w-3.5 h-3.5" />
-              {activePair.receiver.location}
-            </div>
-          </div>
 
-        </div>
-
-        {/* Metric Badges Row */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6 border-t border-[#DCE3DE]">
-          <div className="p-4 rounded-xl bg-[#F5F7F4]/60 border border-[#DCE3DE]/60">
-            <span className="text-xs text-[#66736B]">Transit Distance</span>
-            <div className="font-heading font-bold text-xl text-[#17231D] mt-1">
-              {activePair.distance}
+            <div className="p-4 rounded-xl bg-[#F3F0E9] border border-[#E3DBCC]">
+              <span className="text-[11px] font-mono uppercase text-[#101010]/60 font-semibold">
+                Economic Spread
+              </span>
+              <div className="font-mono font-bold text-lg text-[#101010] mt-1">
+                {activePair.economicValue}
+              </div>
+              <span className="text-[11px] text-[#101010]/70">Net avoided landfill fee</span>
             </div>
-            <span className="text-[11px] text-[#286B4A]">Low transport penalty</span>
-          </div>
 
-          <div className="p-4 rounded-xl bg-[#F5F7F4]/60 border border-[#DCE3DE]/60">
-            <span className="text-xs text-[#66736B]">Emissions Avoided</span>
-            <div className="font-heading font-bold text-xl text-[#286B4A] mt-1">
-              {activePair.co2Saved}
+            <div className="p-4 rounded-xl bg-[#F3F0E9] border border-[#E3DBCC]">
+              <span className="text-[11px] font-mono uppercase text-[#101010]/60 font-semibold">
+                Regulatory Standard
+              </span>
+              <div className="font-mono font-bold text-sm text-[#101010] mt-1 truncate" title={activePair.regulatoryStatus}>
+                {activePair.regulatoryStatus}
+              </div>
+              <span className="text-[11px] text-[#101010]/70">Verified technical passport</span>
             </div>
-            <span className="text-[11px] text-[#66736B]">Scope 3 reduction</span>
-          </div>
-
-          <div className="p-4 rounded-xl bg-[#F5F7F4]/60 border border-[#DCE3DE]/60">
-            <span className="text-xs text-[#66736B]">Economic Margin</span>
-            <div className="font-heading font-bold text-xl text-[#17231D] mt-1">
-              {activePair.economicValue}
-            </div>
-            <span className="text-[11px] text-[#66736B]">Net avoided disposal fee</span>
           </div>
         </div>
-
       </div>
     </section>
   );
