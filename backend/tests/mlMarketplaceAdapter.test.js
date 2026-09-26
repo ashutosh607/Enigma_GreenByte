@@ -39,3 +39,16 @@ test('missing ML economics remains null instead of a fabricated savings figure',
   assert.equal(result.costComparison.potentialSavingsPerTon, null);
   assert.equal(result.compatibility.technicalFit, null);
 });
+
+test('omitting the current purchase price preserves an unknown baseline', () => {
+  const { currentCostPerUnit, ...withoutPrice } = req;
+  const result = buildPayload(withoutPrice, [listing], 'buyer');
+  assert.equal(result.payload.requirement.current_delivered_price_per_tonne, null);
+});
+test('requirement schema permits discovery before the buyer supplies a baseline price', async () => {
+  const Requirement = require('../models/Requirement');
+  const mongoose = require('mongoose');
+  const requirement = new Requirement({ ...req, _id: new mongoose.Types.ObjectId(), buyer: new mongoose.Types.ObjectId(), currentCostPerUnit: undefined });
+  await requirement.validate();
+  assert.equal(requirement.currentCostPerUnit, undefined);
+});

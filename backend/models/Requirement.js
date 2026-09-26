@@ -19,7 +19,7 @@ const requirementSchema = new mongoose.Schema(
         tolerance: { type: String, default: "±5%" },
       },
     ],
-    currentCostPerUnit: { type: Number, required: true },
+    currentCostPerUnit: { type: Number },
     unitPriceUnit: { type: String, default: "₹ / ton" },
     deliveryLocation: {
       city: { type: String, required: true },

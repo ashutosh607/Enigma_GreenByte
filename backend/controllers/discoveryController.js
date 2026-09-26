@@ -27,9 +27,9 @@ const submitAndMatch = async (req, res) => {
       if (typeof body[field] !== 'string' || !body[field].trim()) throw new MlIntegrationError(`Enter ${field}.`);
     }
     if (!(Number(body.requiredQuantity) > 0)) throw new MlIntegrationError('Enter a positive required quantity.');
-    if (body.currentCostPerUnit === '' || body.currentCostPerUnit == null || !Number.isFinite(Number(body.currentCostPerUnit)) || Number(body.currentCostPerUnit) < 0) throw new MlIntegrationError('Enter a non-negative current delivered price.');
+    if (body.currentCostPerUnit != null && body.currentCostPerUnit !== '' && (!Number.isFinite(Number(body.currentCostPerUnit)) || Number(body.currentCostPerUnit) < 0)) throw new MlIntegrationError('Enter a non-negative current delivered price.');
     const fields = ['currentMaterial', 'targetResource', 'intendedUse', 'requiredQuantity', 'minimumQuantity', 'unit', 'requiredProperties', 'currentCostPerUnit', 'deliveryLocation', 'timing', 'neededFrom', 'neededUntil', 'processingAllowed'];
-    const input = Object.fromEntries(fields.filter(k => body[k] != null).map(k => [k, body[k]]));
+    const input = Object.fromEntries(fields.filter(k => body[k] != null && !(k === 'currentCostPerUnit' && body[k] === '')).map(k => [k, body[k]]));
     // Allocate an ID before assessment, but only save after the ML request succeeds.
     const requirement = new Requirement({ ...input, buyer: buyerId, buyerUser: req.user._id });
     await requirement.validate();

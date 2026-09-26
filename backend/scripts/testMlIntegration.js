@@ -61,6 +61,11 @@ async function main() {
     const rejected = await request('/discovery/match', { ...input, requiredProperties: [{ name: 'moisture', targetValue: '<= 3 %', basis: 'input' }] }, buyer.token);
     assert.equal(rejected.opportunities.length, 0);
     assert.ok(rejected.rejectedCount > 0);
+    const { currentCostPerUnit, scenario, ...minimal } = input;
+    const unpriced = await request('/discovery/match', minimal, buyer.token);
+    assert.ok(unpriced.opportunities.length > 0);
+    assert.equal(unpriced.opportunities[0].mlAssessment.cost.status, 'unknown');
+    assert.equal(unpriced.opportunities[0].mlAssessment.cost.savings_low, null);
     const oldToken = process.env.FASTAPI_ML_TOKEN;
     process.env.FASTAPI_ML_TOKEN = 'intentionally-invalid-test-token';
     await request('/discovery/match', input, buyer.token, 502);
