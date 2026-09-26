@@ -45,11 +45,7 @@ export default function MarketplacePage() {
 
   const handleCategoryClick = (catId) => {
     setActiveCategory(catId);
-    if (catId === 'All') {
-      dispatch(setFilters({ category: 'All' }));
-    } else {
-      dispatch(setFilters({ category: catId }));
-    }
+    dispatch(setFilters({ category: catId }));
   };
 
   // Client-side smart matching in case backend categories differ slightly
@@ -74,12 +70,19 @@ export default function MarketplacePage() {
       );
     }
     if (activeCategory === 'Metals & Alloys') {
+      const tags = Array.isArray(item.tags) ? item.tags.join(' ').toLowerCase() : '';
       return (
         cat.includes('metal') ||
         title.includes('steel') ||
         title.includes('slag') ||
+        title.includes('metal') ||
+        title.includes('alloy') ||
         title.includes('iron') ||
-        desc.includes('metallurgy')
+        desc.includes('metallurg') ||
+        desc.includes('metal') ||
+        tags.includes('metallurg') ||
+        tags.includes('slag') ||
+        tags.includes('metal')
       );
     }
     if (activeCategory === 'Chemicals') {

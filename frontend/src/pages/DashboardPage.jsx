@@ -128,6 +128,8 @@ export default function DashboardPage() {
     moisturePercent: '2.5',
     processingRequired: false,
     identityVisibility: 'Public',
+    imageUrl: '',
+    imagePreview: '',
   });
   const [submittingProduct, setSubmittingProduct] = useState(false);
   const [productSuccessMsg, setProductSuccessMsg] = useState('');
@@ -287,6 +289,37 @@ export default function DashboardPage() {
     }
   };
 
+  // Handle local image file upload
+  const handleImageFileChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setProductForm((prev) => ({
+        ...prev,
+        imageUrl: reader.result,
+        imagePreview: reader.result,
+      }));
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleSelectPresetImage = (url) => {
+    setProductForm((prev) => ({
+      ...prev,
+      imageUrl: url,
+      imagePreview: url,
+    }));
+  };
+
+  const handleRemoveImage = () => {
+    setProductForm((prev) => ({
+      ...prev,
+      imageUrl: '',
+      imagePreview: '',
+    }));
+  };
+
   // Handle Add Product submit
   const handleAddProduct = async (e) => {
     e.preventDefault();
@@ -314,6 +347,7 @@ export default function DashboardPage() {
         ],
         processingRequired: productForm.processingRequired,
         identityVisibility: productForm.identityVisibility,
+        images: productForm.imageUrl ? [productForm.imageUrl] : [],
         tags: [productForm.category, productForm.stateOfMatter, productForm.region],
       };
 
@@ -329,6 +363,8 @@ export default function DashboardPage() {
           description: '',
           quantity: '',
           basePrice: '',
+          imageUrl: '',
+          imagePreview: '',
         }));
       }
     } catch (err) {
@@ -1276,6 +1312,168 @@ export default function DashboardPage() {
                 )}
 
                 <form onSubmit={handleAddProduct} className="space-y-6">
+                  {/* ========================================================= */}
+                  {/* PRODUCT IMAGE UPLOAD & LIVE MARKETPLACE PREVIEW */}
+                  {/* ========================================================= */}
+                  <div className="p-5 sm:p-6 rounded-3xl bg-[#FDFCF8] border border-[#E3DBCC] space-y-4">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#E3DBCC]/60 pb-3">
+                      <div>
+                        <span className="text-[10px] font-mono uppercase tracking-wider text-[#065F46] font-bold">
+                          Marketplace Media Asset
+                        </span>
+                        <h4 className="text-sm sm:text-base font-black uppercase text-[#101010]">
+                          Product Photograph & Visual Verification
+                        </h4>
+                      </div>
+                      <span className="text-[11px] font-mono text-[#101010]/50">
+                        Supports PNG, JPG, WebP or Curated Stream Presets
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-12 gap-5 items-start">
+                      {/* Left: Live Marketplace Card Preview */}
+                      <div className="md:col-span-4 space-y-2">
+                        <span className="text-[10px] font-mono uppercase text-[#101010]/50 font-bold block">
+                          Live Marketplace Card Preview
+                        </span>
+                        <div className="relative w-full h-44 rounded-2xl overflow-hidden bg-[#F3F0E9] border border-[#E3DBCC] shadow-xs group">
+                          {productForm.imagePreview || productForm.imageUrl ? (
+                            <>
+                              <img
+                                src={productForm.imagePreview || productForm.imageUrl}
+                                alt="Product preview"
+                                className="w-full h-full object-cover"
+                              />
+                              <button
+                                type="button"
+                                onClick={handleRemoveImage}
+                                className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/60 hover:bg-black text-white flex items-center justify-center cursor-pointer shadow-md text-xs"
+                                title="Remove photo"
+                              >
+                                <X className="w-3.5 h-3.5" />
+                              </button>
+                            </>
+                          ) : (
+                            <div className="w-full h-full flex flex-col items-center justify-center text-[#101010]/40 p-4 text-center">
+                              <Box className="w-8 h-8 mb-1.5 opacity-40" />
+                              <span className="text-[11px] font-mono font-bold">No Image Selected</span>
+                              <span className="text-[9px] text-[#101010]/40 mt-0.5">
+                                Select a file or preset to display on marketplace
+                              </span>
+                            </div>
+                          )}
+
+                          {/* Preview Badges Overlay */}
+                          <div className="absolute top-2 left-2 flex items-center gap-1">
+                            <span className="bg-[#FDFCF8]/95 text-[#101010] text-[9px] font-mono font-bold uppercase px-2 py-0.5 rounded shadow-xs border border-white/60">
+                              {productForm.category || 'BY-PRODUCT'}
+                            </span>
+                            <span className="bg-[#101010]/80 text-white text-[9px] font-mono font-bold uppercase px-2 py-0.5 rounded shadow-xs">
+                              {productForm.stateOfMatter || 'SOLID'}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Right: Upload Options & 1-Click Stream Presets */}
+                      <div className="md:col-span-8 space-y-3.5">
+                        {/* Option A: Local File Upload */}
+                        <div>
+                          <label className="block text-xs font-mono uppercase text-[#101010]/70 font-bold mb-1.5">
+                            1. Upload Photo from Computer / Device
+                          </label>
+                          <label className="flex items-center gap-3 px-4 py-2.5 rounded-xl border border-dashed border-[#101010]/30 hover:border-[#101010] bg-white cursor-pointer transition-colors group">
+                            <PlusCircle className="w-4 h-4 text-[#065F46] group-hover:scale-110 transition-transform" />
+                            <span className="text-xs font-bold text-[#101010]">
+                              {productForm.imagePreview ? 'Change Selected File...' : 'Choose Industrial Photo File (JPG, PNG, WEBP)'}
+                            </span>
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={handleImageFileChange}
+                              className="hidden"
+                            />
+                          </label>
+                        </div>
+
+                        {/* Option B: Direct URL Input */}
+                        <div>
+                          <label className="block text-xs font-mono uppercase text-[#101010]/70 font-bold mb-1.5">
+                            2. Or Paste Public Image URL
+                          </label>
+                          <input
+                            type="url"
+                            placeholder="https://images.unsplash.com/photo-..."
+                            value={productForm.imageUrl}
+                            onChange={(e) =>
+                              setProductForm({
+                                ...productForm,
+                                imageUrl: e.target.value,
+                                imagePreview: e.target.value,
+                              })
+                            }
+                            className="w-full px-3.5 py-2 rounded-xl border border-[#E3DBCC] bg-white text-xs font-mono text-[#101010] focus:outline-none focus:border-[#101010]"
+                          />
+                        </div>
+
+                        {/* Option C: 1-Click Curated Presets */}
+                        <div>
+                          <label className="block text-[11px] font-mono uppercase text-[#101010]/60 font-bold mb-1.5">
+                            3. Or Choose Matching Industrial Stream Preset:
+                          </label>
+                          <div className="flex flex-wrap gap-2">
+                            {[
+                              {
+                                label: 'Blast Furnace / GGBS Slag',
+                                url: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80',
+                              },
+                              {
+                                label: 'Class F Pulverized Fly Ash',
+                                url: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=80',
+                              },
+                              {
+                                label: 'Phosphogypsum Filter Cake',
+                                url: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=800&q=80',
+                              },
+                              {
+                                label: 'Spent Foundry Silica Sand',
+                                url: 'https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=800&q=80',
+                              },
+                              {
+                                label: 'Steel Slag & Metallurgy',
+                                url: 'https://images.unsplash.com/photo-1505705694340-019e1e335916?auto=format&fit=crop&w=800&q=80',
+                              },
+                              {
+                                label: 'Industrial Steel Coils & Scrap',
+                                url: 'https://images.unsplash.com/photo-1504917599217-d4dc5ebe6122?auto=format&fit=crop&w=800&q=80',
+                              },
+                              {
+                                label: 'Industrial Processing Equipment',
+                                url: 'https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=800&q=80',
+                              },
+                              {
+                                label: 'Chemical Tanks & Spent Acids',
+                                url: 'https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?auto=format&fit=crop&w=800&q=80',
+                              },
+                            ].map((preset) => (
+                              <button
+                                key={preset.label}
+                                type="button"
+                                onClick={() => handleSelectPresetImage(preset.url)}
+                                className={`px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold transition-all border cursor-pointer ${
+                                  productForm.imageUrl === preset.url
+                                    ? 'bg-[#101010] text-white border-[#101010] shadow-xs'
+                                    : 'bg-white hover:bg-[#F3F0E9] text-[#101010] border-[#E3DBCC]'
+                                }`}
+                              >
+                                {preset.label}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs font-mono uppercase text-[#101010]/70 font-bold mb-1.5">

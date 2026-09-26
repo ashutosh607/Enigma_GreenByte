@@ -19,7 +19,7 @@ const getMaterialImage = (resource) => {
   const title = (resource.title || '').toLowerCase();
   const category = (resource.category || '').toLowerCase();
 
-  if (title.includes('phospho') || title.includes('gypsum') || title.includes('filter cake')) {
+  if (title.includes('phospho') || title.includes('gypsum') || title.includes('filter cake') || title.includes('cake')) {
     // White/beige stacked industrial bags & filter cake in plant (as in reference image 1)
     return 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=800&q=80';
   }
@@ -31,15 +31,27 @@ const getMaterialImage = (resource) => {
     // Fine silica sand and mineral aggregate mounds under industrial shed (as in reference image 3)
     return 'https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=800&q=80';
   }
-  if (title.includes('fly ash') || title.includes('pulverized') || title.includes('ash')) {
+  if (title.includes('fly ash') || title.includes('pulverized') || title.includes('ash') || title.includes('pozzolan')) {
     // Dark pulverized fine industrial mineral powder in factory vats (as in reference image 4)
     return 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=80';
   }
-  if (title.includes('steel slag') || title.includes('slag') || title.includes('metal')) {
+  if (title.includes('steel slag') || title.includes('slag')) {
     // Heavy metallic and mineral steel slag rocks in processing yard (as in reference image 5)
     return 'https://images.unsplash.com/photo-1505705694340-019e1e335916?auto=format&fit=crop&w=800&q=80';
   }
-  if (category.includes('chemical') || title.includes('chemical') || title.includes('caustic')) {
+  if (title.includes('metal') || title.includes('alloy') || title.includes('steel') || title.includes('scrap') || title.includes('iron') || category.includes('metal')) {
+    // Heavy industrial steel coils & metallurgy billets
+    return 'https://images.unsplash.com/photo-1504917599217-d4dc5ebe6122?auto=format&fit=crop&w=800&q=80';
+  }
+  if (title.includes('machin') || title.includes('equip') || title.includes('kiln') || title.includes('crusher') || title.includes('mill') || category.includes('machin')) {
+    // Industrial machinery & grinding mill
+    return 'https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=800&q=80';
+  }
+  if (title.includes('textil') || title.includes('fiber') || title.includes('fabric') || category.includes('textil')) {
+    // Industrial recycled textile and yarn bales
+    return 'https://images.unsplash.com/photo-1594824813580-c0813f3801f0?auto=format&fit=crop&w=800&q=80';
+  }
+  if (category.includes('chemical') || title.includes('chemical') || title.includes('caustic') || title.includes('acid')) {
     return 'https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?auto=format&fit=crop&w=800&q=80';
   }
   if (category.includes('biomass') || title.includes('biomass')) {
