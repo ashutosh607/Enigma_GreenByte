@@ -4,7 +4,8 @@ import HeroContent from './HeroContent';
 import FloatingControls from './FloatingControls';
 import DemoModal from './DemoModal';
 
-import factoryVideo from '@/assets/landingpagevd.mp4';
+import factoryVideo from '../../assets/landingpagevd.mp4';
+
 
 export default function HeroSection() {
   const videoRef = useRef(null);
