@@ -11,8 +11,9 @@ import {
   ArrowRight,
   ShieldCheck,
   DollarSign,
+  CreditCard,
 } from 'lucide-react';
-import { resourceApi, dealApi } from '../services/api';
+import { resourceApi, dealApi, paymentApi } from '../services/api';
 import MaterialPassport from '../components/MaterialPassport';
 
 export default function MaterialDetailPage() {
@@ -23,6 +24,7 @@ export default function MaterialDetailPage() {
   const [error, setError] = useState(null);
   const [dealQuantity, setDealQuantity] = useState(300);
   const [initiating, setInitiating] = useState(false);
+  const [buying, setBuying] = useState(false);
 
   useEffect(() => {
     resourceApi
@@ -53,6 +55,23 @@ export default function MaterialDetailPage() {
     } catch (err) {
       alert(err.response?.data?.message || 'Failed to initiate deal');
       setInitiating(false);
+    }
+  };
+
+  const handleInstantBuy = async () => {
+    if (!resource) return;
+    setBuying(true);
+    try {
+      await paymentApi.instantPurchase({
+        resourceId: resource._id,
+        quantity: dealQuantity,
+        paymentMethod: 'NEFT / RTGS Industrial Escrow Vault',
+        deliveryNotes: 'Instant Escrow order direct checkout.',
+      });
+      navigate('/dashboard?tab=orders');
+    } catch (err) {
+      alert(err.response?.data?.message || 'Instant payment processing failed');
+      setBuying(false);
     }
   };
 
@@ -169,11 +188,25 @@ export default function MaterialDetailPage() {
                 <button
                   type="button"
                   onClick={handleInitiateDeal}
-                  disabled={initiating}
-                  className="w-full py-3 rounded-lg bg-[#101010] text-[#FDFCF8] text-xs font-bold hover:bg-black transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm disabled:opacity-50"
+                  disabled={initiating || buying}
+                  className="w-full py-3 rounded-xl bg-[#101010] text-[#FDFCF8] text-xs font-bold hover:bg-black transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm disabled:opacity-50"
                 >
                   {initiating ? 'Opening Commercial Deal...' : 'Initiate Deal & Negotiate'}
                   <ArrowRight className="w-4 h-4" />
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleInstantBuy}
+                  disabled={initiating || buying}
+                  className="w-full py-3 rounded-xl bg-[#065F46] hover:bg-[#059669] text-white text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm disabled:opacity-50 mt-2"
+                >
+                  <CreditCard className="w-4 h-4" />
+                  <span>
+                    {buying
+                      ? 'Securing Escrow Vault...'
+                      : `Instant Escrow Purchase (₹${((dealQuantity || 100) * resource.basePrice).toLocaleString()})`}
+                  </span>
                 </button>
               </div>
             </div>

@@ -54,6 +54,8 @@ export const dealApi = {
   getDealById: (id) => api.get(`/deals/${id}`),
   advanceDealStatus: (id, nextStatus) =>
     api.patch(`/deals/${id}/advance-status`, { nextStatus }),
+  advanceDispatch: (id, data) =>
+    api.patch(`/deals/${id}/advance-dispatch`, data),
 };
 
 // Price Requests API (Structured Slider Negotiation)
@@ -79,6 +81,7 @@ export const assessmentApi = {
 export const paymentApi = {
   getDealPaymentSummary: (dealId) => api.get(`/payments/deal-summary/${dealId}`),
   processPayment: (data) => api.post('/payments/process', data),
+  instantPurchase: (data) => api.post('/payments/instant-purchase', data),
   getPayments: () => api.get('/payments'),
 };
 
