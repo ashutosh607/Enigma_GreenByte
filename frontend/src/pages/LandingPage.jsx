@@ -23,8 +23,8 @@ import ListResourceModal from '../components/ListResourceModal';
 import LiveDemoCard from '../components/sections/LiveDemoCard';
 import CrossIndustryProof from '../components/sections/CrossIndustryProof';
 import DemoModal from '../components/hero/DemoModal';
+import factoryVideo from '../assets/landingpagevd.mp4';
 
-const factoryVideo = '/assets/video/industrial-hero.mp4';
 const factoryPoster = '/assets/video/industrial-hero-poster.jpg';
 
 export default function LandingPage() {
@@ -37,6 +37,13 @@ export default function LandingPage() {
   const videoRef = useRef(null);
 
   useEffect(() => {
+    // Ensure video autoplays on mount
+    if (videoRef.current) {
+      videoRef.current.defaultMuted = true;
+      videoRef.current.muted = true;
+      videoRef.current.play().catch(() => {});
+    }
+
     resourceApi
       .getResources({ limit: 3 })
       .then((res) => setFeaturedResources(res.data.resources?.slice(0, 3) || []))
@@ -61,28 +68,28 @@ export default function LandingPage() {
       {/* 1. CINEMATIC HERO SECTION WITH HIGH-GRADE INDUSTRIAL VIDEO */}
       <section className="relative w-full min-h-[92vh] flex items-center justify-center overflow-hidden border-b border-[#E3DBCC]">
         {/* Background Video / Atmospheric Poster */}
-        <div className="absolute inset-0 w-full h-full overflow-hidden z-0">
+        <div className="absolute inset-0 w-full h-full overflow-hidden z-0 bg-black">
           <video
             ref={videoRef}
             autoPlay
             loop
             muted={isMuted}
             playsInline
+            preload="auto"
+            src={factoryVideo}
             onLoadedData={() => setVideoLoaded(true)}
             poster={factoryPoster}
-            className={`absolute inset-0 w-full h-full object-cover object-center filter grayscale-[30%] contrast-[1.08] transition-opacity duration-1000 ${
-              videoLoaded ? 'opacity-100' : 'opacity-90'
-            }`}
+            className="absolute inset-0 w-full h-full object-cover object-center pointer-events-none"
           >
             <source src={factoryVideo} type="video/mp4" />
           </video>
 
-          {/* Elegant Scrim Overlay: Soft Off-White radial and vertical vignette */}
+          {/* Elegant Scrim Overlay: Soft neutral radial and vertical vignette allowing factory & smoke to remain clearly visible */}
           <div
             className="absolute inset-0 pointer-events-none"
             style={{
               background:
-                'radial-gradient(ellipse 75% 65% at 50% 45%, rgba(253, 252, 248, 0.93) 0%, rgba(253, 252, 248, 0.82) 48%, rgba(243, 240, 233, 0.89) 100%)',
+                'radial-gradient(ellipse 70% 60% at 50% 45%, rgba(253, 252, 248, 0.45) 0%, rgba(253, 252, 248, 0.22) 48%, rgba(16, 16, 16, 0.38) 100%)',
             }}
           />
         </div>
