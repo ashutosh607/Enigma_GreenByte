@@ -16,6 +16,9 @@ embeddings = ["sentence-transformers>=3.1,<6"]
 [tool.setuptools]
 packages = ["ps5"]
 
+[tool.vercel]
+entrypoint = "ps5.api:app"
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]

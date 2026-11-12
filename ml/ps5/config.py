@@ -8,11 +8,11 @@ ROOT = Path(__file__).resolve().parent.parent
 
 @dataclass
 class Settings:
-    database: str = field(default_factory=lambda: os.getenv("PS5_DATABASE", str(ROOT / "var/ps5.sqlite")))
+    database: str = field(default_factory=lambda: os.getenv("PS5_DATABASE", "/tmp/ps5.sqlite" if os.getenv("VERCEL") else str(ROOT / "var/ps5.sqlite")))
     graph_path: str = field(default_factory=lambda: os.getenv("PS5_GRAPH_PATH", str(ROOT / "data/W2RKG_08.json")))
     demo: bool = field(default_factory=lambda: os.getenv("PS5_DEMO", "0") == "1")
     tokens: dict[str, str] = field(default_factory=lambda: json.loads(os.getenv("PS5_TOKENS", "{}")))
-    bridge_token: str = field(default_factory=lambda: os.getenv("PS5_BRIDGE_TOKEN", ""))
+    bridge_token: str = field(default_factory=lambda: os.getenv("PS5_BRIDGE_TOKEN") or os.getenv("FASTAPI_ML_TOKEN", ""))
     admin_token: str = field(default_factory=lambda: os.getenv("PS5_ADMIN_TOKEN", ""))
     origins: list[str] = field(default_factory=lambda: os.getenv("PS5_CORS_ORIGINS", "http://localhost:3000,http://localhost:5173").split(","))
     embedding_backend: str = field(default_factory=lambda: os.getenv("PS5_EMBEDDINGS", "lexical"))

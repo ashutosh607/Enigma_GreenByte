@@ -7,7 +7,7 @@ async function callFastApiMlEngine(payload) {
   if (!url || !token) throw new MlIntegrationError("AI discovery is not configured. Start the ML service and configure its private connection.", 503);
   let response;
   try {
-    response = await fetch(`${url.replace(/\/$/, '')}/v1/integrations/marketplace/matches`, {
+    response = await fetch(new URL("/v1/integrations/marketplace/matches", url).toString(), {
       method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
       body: JSON.stringify(payload), signal: AbortSignal.timeout(60000),
     });
