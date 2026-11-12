@@ -41,6 +41,7 @@ import {
   FileSignature,
   Activity,
   Maximize2,
+  Lock,
 } from 'lucide-react';
 import { dealApi, resourceApi, discoveryApi, priceRequestApi, paymentApi, authApi } from '../services/api';
 import { updateUserProfile } from '../store/slices/authSlice';
