@@ -30,8 +30,16 @@ app.use(
   })
 );
 
-// Connect to Database
-connectDB();
+app.use("/api", async (req, res, next) => {
+  if (req.path === "/health") return next();
+  try {
+    await connectDB();
+  } catch (error) {
+    console.error("Database connection unavailable", error.name, error.code || "");
+    return res.status(503).json({ success: false, message: "Database temporarily unavailable. Please try again." });
+  }
+  next();
+});
 
 // API Endpoints
 app.use("/api/auth", authRoutes);

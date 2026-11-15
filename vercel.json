@@ -31,6 +31,20 @@
       }
     },
     {
+      "source": "/:page(marketplace|ai-discovery|dashboard|admin|register|signup)",
+      "destination": {
+        "service": "frontend",
+        "path": "/index.html"
+      }
+    },
+    {
+      "source": "/:section(materials|opportunities|deals)/:id",
+      "destination": {
+        "service": "frontend",
+        "path": "/index.html"
+      }
+    },
+    {
       "source": "/(.*)",
       "destination": {
         "service": "frontend"

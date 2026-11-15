@@ -148,7 +148,7 @@ export default function LandingPage() {
           >
             <div>
               <div className="text-2xl sm:text-3xl font-black text-[#101010] font-mono">
-                {impactMetrics ? impactMetrics.totalWasteDivertedTons?.toLocaleString() : '14,550'}
+                {impactMetrics?.totalWasteDivertedTons?.toLocaleString() ?? '—'}
                 <span className="text-xs font-normal text-[#101010]/60 ml-1">tons</span>
               </div>
               <div className="text-xs uppercase font-mono text-[#101010]/60 mt-1 font-semibold">
@@ -158,7 +158,7 @@ export default function LandingPage() {
 
             <div>
               <div className="text-2xl sm:text-3xl font-black text-[#101010] font-mono">
-                {impactMetrics ? impactMetrics.totalVirginDisplacedTons?.toLocaleString() : '13,200'}
+                {impactMetrics?.totalVirginDisplacedTons?.toLocaleString() ?? '—'}
                 <span className="text-xs font-normal text-[#101010]/60 ml-1">tons</span>
               </div>
               <div className="text-xs uppercase font-mono text-[#101010]/60 mt-1 font-semibold">
@@ -168,7 +168,7 @@ export default function LandingPage() {
 
             <div className="col-span-2 md:col-span-1">
               <div className="text-2xl sm:text-3xl font-black text-[#286B4A] font-mono">
-                {impactMetrics ? impactMetrics.totalCo2eAbatedMT?.toLocaleString() : '9,140'}
+                {impactMetrics?.totalCo2eAbatedMT?.toLocaleString() ?? '—'}
                 <span className="text-xs font-normal text-[#101010]/60 ml-1">MT</span>
               </div>
               <div className="text-xs uppercase font-mono text-[#101010]/60 mt-1 font-semibold">
