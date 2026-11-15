@@ -29,10 +29,10 @@ const CATEGORY_TABS = [
 
 export default function MarketplacePage() {
   const dispatch = useDispatch();
-  const { items, loading, filters } = useSelector((state) => state.resources);
+  const { items, loading, filters, error } = useSelector((state) => state.resources);
 
-  const [activeCategory, setActiveCategory] = useState('All');
-  const [searchInput, setSearchInput] = useState('');
+  const activeCategory = filters.category;
+  const [searchInput, setSearchInput] = useState(filters.search);
   const [showFilters, setShowFilters] = useState(false);
 
   useEffect(() => {
@@ -45,7 +45,6 @@ export default function MarketplacePage() {
   };
 
   const handleCategoryClick = (catId) => {
-    setActiveCategory(catId);
     dispatch(setFilters({ category: catId }));
   };
 
@@ -198,7 +197,6 @@ export default function MarketplacePage() {
                 type="button"
                 onClick={() => {
                   dispatch(resetFilters());
-                  setActiveCategory('All');
                   setSearchInput('');
                 }}
                 className="text-xs font-semibold text-[#101010]/70 hover:text-[#101010] underline cursor-pointer"
@@ -281,6 +279,14 @@ export default function MarketplacePage() {
               Querying verified industrial streams...
             </p>
           </div>
+        ) : error ? (
+          <div className="py-20 text-center space-y-3">
+            <p role="alert">The material listings could not be loaded.</p>
+            <button type="button" onClick={() => dispatch(fetchResources(filters))}
+              className="px-4 py-2 rounded-xl bg-[#101010] text-white text-xs font-bold">
+              Try again
+            </button>
+          </div>
         ) : filteredItems.length === 0 ? (
           <div className="card-ivory p-12 text-center border border-[#E3DBCC] rounded-2xl max-w-md mx-auto space-y-3">
             <p className="text-sm font-bold text-[#101010]">No materials match this filter.</p>
@@ -291,7 +297,6 @@ export default function MarketplacePage() {
               type="button"
               onClick={() => {
                 dispatch(resetFilters());
-                setActiveCategory('All');
                 setSearchInput('');
               }}
               className="px-4 py-2 rounded-xl bg-[#101010] text-white text-xs font-bold"

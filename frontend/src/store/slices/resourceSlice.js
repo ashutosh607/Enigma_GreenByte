@@ -6,6 +6,9 @@ export const fetchResources = createAsyncThunk(
   async (filters = {}, { rejectWithValue }) => {
     try {
       const res = await resourceApi.getResources(filters);
+      if (!Array.isArray(res.data?.resources)) {
+        return rejectWithValue('The marketplace returned an unexpected response.');
+      }
       return res.data.resources;
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || 'Failed to fetch resources');
@@ -66,14 +69,18 @@ const resourceSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchResources.pending, (state) => {
+      .addCase(fetchResources.pending, (state, action) => {
+        state.listRequestId = action.meta.requestId;
+        state.error = null;
         state.loading = true;
       })
       .addCase(fetchResources.fulfilled, (state, action) => {
+        if (state.listRequestId !== action.meta.requestId) return;
         state.loading = false;
         state.items = action.payload;
       })
       .addCase(fetchResources.rejected, (state, action) => {
+        if (state.listRequestId !== action.meta.requestId) return;
         state.loading = false;
         state.error = action.payload;
       })

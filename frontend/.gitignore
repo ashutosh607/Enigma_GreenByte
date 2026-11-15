@@ -12,6 +12,7 @@ dist
 dist-ssr
 *.local
 *.mp4
+!src/assets/mineral-recovery.mp4
 !src/assets/landingpagevd.mp4
 
 

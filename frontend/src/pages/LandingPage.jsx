@@ -15,25 +15,25 @@ import { resourceApi, impactApi } from '../services/api';
 import ResourceCard from '../components/ResourceCard';
 import ListResourceModal from '../components/ListResourceModal';
 import DemoModal from '../components/hero/DemoModal';
-import factoryVideo from '../assets/landingpagevd.mp4';
-
-const factoryPoster = '/assets/video/industrial-hero-poster.jpg';
+import factoryVideo from '../assets/mineral-recovery.mp4';
+import factoryPoster from '../assets/mineral-recovery.jpg';
 
 export default function LandingPage() {
   const [featuredResources, setFeaturedResources] = useState([]);
   const [impactMetrics, setImpactMetrics] = useState(null);
   const [listModalOpen, setListModalOpen] = useState(false);
   const [demoOpen, setDemoOpen] = useState(false);
-  const [videoLoaded, setVideoLoaded] = useState(false);
   const videoRef = useRef(null);
 
   useEffect(() => {
-    // Ensure video autoplays on mount
-    if (videoRef.current) {
-      videoRef.current.defaultMuted = true;
-      videoRef.current.muted = true;
-      videoRef.current.play().catch(() => {});
-    }
+    const video = videoRef.current;
+    const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const syncPlayback = () => {
+      if (motionPreference.matches) video.pause();
+      else video.play().catch(() => {});
+    };
+    syncPlayback();
+    motionPreference.addEventListener('change', syncPlayback);
 
     resourceApi
       .getResources({ limit: 3 })
@@ -44,6 +44,7 @@ export default function LandingPage() {
       .getImpactMetrics()
       .then((res) => setImpactMetrics(res.data.metrics))
       .catch(() => {});
+    return () => motionPreference.removeEventListener('change', syncPlayback);
   }, []);
 
   // Animation variants
@@ -77,18 +78,15 @@ export default function LandingPage() {
         <div className="absolute inset-0 w-full h-full overflow-hidden z-0 bg-black">
           <video
             ref={videoRef}
-            autoPlay
+            aria-hidden="true"
             loop
             muted
             playsInline
-            preload="auto"
+            preload="none"
             src={factoryVideo}
-            onLoadedData={() => setVideoLoaded(true)}
             poster={factoryPoster}
             className="absolute inset-0 w-full h-full object-cover object-center pointer-events-none"
-          >
-            <source src={factoryVideo} type="video/mp4" />
-          </video>
+          />
 
           {/* Elegant Scrim Overlay */}
           <div
